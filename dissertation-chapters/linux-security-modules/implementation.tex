@@ -106,10 +106,10 @@ The same process is kept to the other configurable options. Depending on their v
 \subsection{Linux capabilities}
 \label{sec:linux_capabilities}
 
-Linux capabilities were designed to provide a solution to the UNIX-style user privilege set composed by privilege users (\texttt{root}) and non-privilege users \texttt{regular user}. The first type has permission to execute every operation and the former can only execute a few set of operations. Thus, processes run either with all permissions or with very restrictive permissions. Unfortunately, most of the time processes do not need all privileges and this exposure raises serious risk when a process gets compromised \cite{Wiki:Capabilities}.\\
+Linux capabilities were designed to provide a solution to the UNIX-style user privilege set composed by privilege users (root) and non-privilege users (regular user). The first type has permission to execute every operation and the former can only execute a few set of operations. Therefore, processes run either with all permissions or with very restrictive permissions. Unfortunately, most of the time processes do not need all privileges to execute a task and this exposure raises serious risks when a process gets compromised \cite{Wiki:Capabilities}.\\
 
 \noindent
-In the scope of \gls{lsm}, a set of functions called common capabilities were developed to give the security framework a default behavior in the case no other \gls{lsm} is loaded. These functions are plugged in the kernel to overcome the privilege problem mentioned above. In \texttt{security/commoncap.c} we can see the source code of these functions.\\
+In the scope of \gls{lsm}, a set of functions, called \textit{common capabilities}, were developed to give the security framework a default behavior in the case no other \gls{lsm} is loaded. These functions are plugged in the kernel to overcome the problem mentioned above. In \texttt{security/commoncap.c} we can see the source code of these functions.\\
 
 \noindent
 If no \gls{lsm} is loaded, there must be a default function hook that does not execute any operation and let the process access kernel internal objects. The file \texttt{security/capability.c} have all hook functions with the default code. If the return type is \texttt{void}, functions have no operations, otherwise is \texttt{int} and functions just \texttt{return 0}, which is the value to turn the hook permissive. \autoref{lst:cap_hooks} shows some of these hook functions.
@@ -183,7 +183,7 @@ extern void __init security_fixup_ops(struct security_operations *ops);
 \end{lstlisting}
 
 \noindent
-These functions are implemented in \texttt{security/security.c}. The first function being executed is \texttt{security\_init}, which source code is present in \autoref{lst:security_init_func}.
+These functions are implemented in \texttt{security/security.c}. The first function being executed is \texttt{security\_init}. The source code is present in \autoref{lst:security_init_func}.
 
 \begin{lstlisting}[frame=none, numbers=none, caption=\texttt{security\_init} function (Linux kernel v3.11), label=lst:security_init_func]
 /* Boot-time LSM user choice */
@@ -210,7 +210,7 @@ int __init security_init(void)
 \end{lstlisting}
 
 \noindent
-At first, the default module is loaded with the available routines cited in \autoref{sec:linux_capabilities}, by \texttt{security\_fixup\_ops(&default\_security\_ops)}. Then \texttt{security\_init()} updates the kernel's security structure \texttt{security\_ops} with the initialized earlier and makes a call to \texttt{do\_security\_initcalls()} that implements a loop presented in \autoref{lst:sec_initcalls}.
+At first, the default module is loaded with the available routines cited in \autoref{sec:linux_capabilities}, by \texttt{security\_fixup\_ops(&default\_security\_ops)}. Then \texttt{security\_init()} updates the kernel's security structure \texttt{security\_ops} with the data earlier initialized and makes a call to \texttt{do\_security\_initcalls()} that implements a loop presented in \autoref{lst:sec_initcalls}.
 
 \begin{lstlisting}[frame=none, numbers=none, caption=\texttt{do\_security\_initcalls} function (Linux kernel v3.11), label=lst:sec_initcalls]
 static void __init do_security_initcalls(void)
@@ -239,7 +239,7 @@ extern initcall_t __security_initcall_start[], __security_initcall_end[];
 \end{lstlisting}
 
 \subsection{LSM registration}
-The kernel only runs one \gls{lsm}, even though there are some available by the time this article was written. Therefore, there must be a way to register the desired module. This is achieved through the execution of \texttt{register\_security(struct security\_operations *ops)}, exhibited in \autoref{lst:register_sec}
+There are several \gls{lsm} implementations adopted in the kernel, but this only runs one at a time. Therefore, there must be a way to register the desired \gls{lsm}. This is achieved through the execution of \texttt{register\_security(struct security\_operations *ops)}, exhibited in \autoref{lst:register_sec}
 
 \begin{lstlisting}[frame=none, numbers=none, caption=\texttt{register\_security} function (Linux kernel v3.11), label=lst:register_sec]
 int __init register_security(struct security_operations *ops)
@@ -260,7 +260,7 @@ int __init register_security(struct security_operations *ops)
 \end{lstlisting}
 
 \noindent
-Some rudimentary check is done on the structure \texttt{ops} by \texttt{verify(struct security\_operations *ops)}. If there is already a security module registered with the kernel, an error will be returned. Otherwise, the structure \texttt{security\_ops} gets the hook functions in the structure passed by parameter, \texttt{ops}, and return success.\\
+Some rudimentary check is done on the structure \texttt{ops} by \texttt{verify(struct security\_operations *ops)}. If there is already a security module registered with the kernel, an error will be returned. Otherwise, the structure \texttt{security\_ops} gets the hook functions in the structure \texttt{ops} and return success.\\
 
 \noindent
 There is other important function related to the \gls{lsm} registration, that is \texttt{security\_module\_enable}. Each \gls{lsm} must pass this method before registering its own operations to avoid security registration races. This method may also be used to check if the \gls{lsm} is currently loaded during kernel initialization. \autoref{lst:sec_mod_enable} presents this function.
@@ -331,4 +331,4 @@ int __sock_create(struct net *net, int family, int type, int protocol,
 \end{lstlisting}
 
 \noindent
-This hook is simply a flag where the returned value is checked and if it is different from \texttt{0}, the kernel blocks the socket creation. That is the reason why the default capability functions always return \texttt{0}.
+This hook is simply a flag in which the returned value is checked and if it is different from \texttt{0}, the kernel blocks the socket creation. That is the reason why the default capability functions always return \texttt{0}.

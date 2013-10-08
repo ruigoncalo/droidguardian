@@ -7,4 +7,5 @@ The basic abstraction of the \gls{lsm} interface is to intercede in the access t
  \label{fig:lsm_arch}
 \end{figure}
 
-Immediately before the kernel access the object, represented as \textit{inode} in \autoref{fig:lsm_arch}, the hook makes a call to a function that the \gls{lsm} module must provide. The module, based on policy rules, allow the access, or deny it, forcing an error code return.
+\noindent
+Immediately before the kernel access the object, represented as \textit{inode} in \autoref{fig:lsm_arch}, the hook makes a call to a function that the \gls{lsm} must provide. The module, based on policy rules, either allow or deny the access, forcing an error code return in the last case.

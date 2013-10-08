@@ -1,8 +1,0 @@
-\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Design}{}% 2
-\BOOKMARK [1][-]{section.3}{Implementation}{}% 3
-\BOOKMARK [2][-]{subsection.3.1}{Header file}{section.3}% 4
-\BOOKMARK [2][-]{subsection.3.2}{Linux capabilities}{section.3}% 5
-\BOOKMARK [2][-]{subsection.3.3}{Framework initialization}{section.3}% 6
-\BOOKMARK [2][-]{subsection.3.4}{LSM registration}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.5}{Security functions in the kernel}{section.3}% 8
