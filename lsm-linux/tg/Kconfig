@@ -1,0 +1,5 @@
+config SECURITY_TG
+	bool "TuxGuardian"
+	default n
+	help
+	  TuxGuardian Module
