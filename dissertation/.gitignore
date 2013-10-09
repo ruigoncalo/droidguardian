@@ -1,0 +1,9 @@
+# LaTeX file
+*.log
+*.aux
+*.bbl
+*.blg
+*.glg
+*.glo
+*.out
+*.xdy

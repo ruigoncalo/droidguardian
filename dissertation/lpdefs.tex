@@ -1,0 +1,80 @@
+\newcommand{\imageItemize}[3]
+{
+    \begin{figure}[!h]
+        \begin{center}
+            \includegraphics[width=#1\textwidth]{images/#2}
+                #3
+                \label{#2}
+        \end{center}
+    \end{figure}
+    % force dump image queue here
+    \clearpage
+}
+%insere uma imagem com legenda
+\newcommand{\imageFourCamps}[4]
+{
+    \begin{figure}[!h]
+        \begin{center}
+            \includegraphics[width=#1\textwidth]{images/#2}
+                \caption[#3]{#4}
+                \label{#2}
+        \end{center}
+    \end{figure}
+    % force dump image queue here
+    %\clearpage
+}
+%%%%%%%%%%%% image with size and description%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%insere uma imagem com legenda
+\newcommand{\imageSize}[3]
+{
+    \begin{figure}[!h]
+        \begin{center}
+            \includegraphics[width=#1\textwidth]{images/#2}
+                \caption{#3}
+                \label{#2}
+        \end{center}
+    \end{figure}
+    % force dump image queue here
+    %\clearpage
+}
+%%%%%%%%%%% image with description %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\image}[2]
+{
+    \begin{figure}[!h]
+        \begin{center}
+            \includegraphics[width=\textwidth]{images/#1}
+                \caption{#2}
+                \label{#1}
+        \end{center}
+    \end{figure}
+    % force dump image queue here
+    %\clearpage
+}
+%%%%%%%%%%% requirements table %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{darkblue}{rgb}{0,0,0.1}
+\definecolor{DarklessBlue}{rgb}{0.82,0.90,0.93}
+\definecolor{DarkBlue}{rgb}{0.66,0.83,0.89}
+\definecolor{RefBlack}{rgb}{0,0.27,0.45}
+
+
+%type of requirement
+\newcommand{\mh}{Must Have}
+\newcommand{\sh}{Should Have}
+\newcommand{\ch}{Could Have}
+\newcommand{\wh}{Won't Have}
+%hyperlink
+\newcommand{\hl}[1]
+{\hyperlink{#1}{#1}}
+%multiple column
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+%requirement template
+\newcommand{\requirement}[5]
+{
+{\begin{center}\begin{tabular}{rlll}\mc{1}{>{\columncolor{DarkBlue}\raggedleft}p{0.25\textwidth}}{\textbf{Requirement \#}} & \mc{1}{>{\columncolor{DarklessBlue}}p{0.1\textwidth}}{#1} & \mc{1}{>{\columncolor{DarkBlue}\raggedleft}p{16mm}}{\textbf{Priority}} & \mc{1}{>{\columncolor{DarklessBlue}}l}{#2}\\
+\mc{1}{>{\columncolor{DarkBlue}\raggedleft}p{0.25\textwidth}}{\textbf{Description}} & \mc{3}{>{\columncolor{DarklessBlue}}p{0.87\textwidth}}{#3}\\
+\mc{1}{>{\columncolor{DarkBlue}\raggedleft}p{0.25\textwidth}}{\textbf{Justification}} & \mc{3}{>{\columncolor{DarklessBlue}}p{0.87\textwidth}}{#4}\\
+\mc{1}{>{\columncolor{DarkBlue}\raggedleft}p{0.25\textwidth}}{\textbf{Fit criteria}} & \mc{3}{>{\columncolor{DarklessBlue}}p{0.87\textwidth}}{#5}\\
+\end{tabular}\end{center}}
+}
+
