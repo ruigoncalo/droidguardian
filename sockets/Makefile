@@ -1,4 +1,4 @@
-obj-m := client_module.o
+obj-m := client_module.o server_module.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
