@@ -1,0 +1,8 @@
+/* Ignore files */
+*.o
+*.ko
+modules.*
+Module.*
+*.cmd
+*.mod.*
+tmp_versions/
