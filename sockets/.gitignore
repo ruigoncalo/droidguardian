@@ -5,4 +5,4 @@ modules.*
 Module.*
 *.cmd
 *.mod.*
-tmp_versions/
+.tmp_versions/
