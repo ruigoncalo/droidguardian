@@ -9,7 +9,8 @@
 #define SOCK_PATH "/tmp/usocket"
 #define MAX 100
 
-struct socket *sock;
+struct socket *sock = NULL;
+
 int create_socket( void );
 int connect_socket( void );
 int recv_msg(char str[MAX]);
