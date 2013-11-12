@@ -113,7 +113,7 @@ static int __init server_module_init( void ) {
   return 0;
 }
 
-static void __init server_module_exit( void ) {
+static void __exit server_module_exit( void ) {
   printk(KERN_INFO "Exit usocket.");
 }
 
