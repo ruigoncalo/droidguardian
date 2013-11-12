@@ -15,8 +15,6 @@ int send_msg_to_client(int socketfd, char* data) {
   struct iovec iov;
   int s;
 
-  printf("before send - data: %s, length: %d\n",data, (int) strlen(data));
-  
   memset(&msg, 0, sizeof(msg));
   memset(&iov, 0, sizeof(iov));
 

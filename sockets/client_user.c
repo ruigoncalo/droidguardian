@@ -19,8 +19,6 @@ int recv_msg_from_server(int socketfd, char data[MAX]) {
   memset(&msg, 0, sizeof(msg));
   memset(&iov, 0, sizeof(iov));
 
-  printf("before recv - data: %c, strlen: %d\n",data[0], (int)strlen(data));
-
   msg.msg_name = NULL;
   msg.msg_namelen = 0;
   iov.iov_base = data;
