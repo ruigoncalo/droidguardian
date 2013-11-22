@@ -1,60 +1,71 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#include "server_user.h"
 
-#define SOCK_PATH "/tmp/usocket"
-
-int send_msg_to_client(int socketfd, char* data) {
-
+int recv_query_from_module(int sockfd, struct dg_query *query){
   struct msghdr msg;
-  struct iovec iov;
-  int s;
-
-  memset(&msg, 0, sizeof(msg));
-  memset(&iov, 0, sizeof(iov));
-
-  msg.msg_name = NULL;
+  struct iovec  iov;
+  ssize_t retval;
+  
+  msg.msg_name = 0;
   msg.msg_namelen = 0;
-  iov.iov_base = data;
-  iov.iov_len = strlen(data)+1;
   msg.msg_iov = &iov;
   msg.msg_iovlen = 1;
   msg.msg_control = NULL;
   msg.msg_controllen = 0;
   msg.msg_flags = 0;
 
-  s = sendmsg(socketfd, &msg, 0);
+  msg.msg_iov->iov_base = (void *) query;
+  msg.msg_iov->iov_len  = (__kernel_size_t) tg_query_size;
 
-  printf("after send - iov_base: %s, length: %d\n", (char *) msg.msg_iov->iov_base, (int) strlen(msg.msg_iov->iov_base));
+  retval = recvmsg(sockfd, &msg, 0);
 
-  if(s < 0){
-    perror("sendmsg");
-    return 0;
+  if (retval <= 0) {
+    printf("DroidGuardian: Error receiving query from module.\n");
+    perror("recvmsg");
+    return -1;
   }
 
-  return s;
+  return 0;
+}
+
+
+ssize_t send_answer_to_module(int sockfd, struct dg_query *query){
+  struct msghdr msg;
+  struct iovec iov;
+  ssize_t retval;
+
+  memset(&msg, 0, sizeof(msg));
+  memset(&iov, 0, sizeof(iov));
+
+  msg.msg_name = NULL;
+  msg.msg_namelen = 0;
+  iov.iov_base = (void *) query;
+  iov.iov_len = (__kernel_size_t) dg_query_size;
+  msg.msg_iov = &iov;
+  msg.msg_iovlen = 1;
+  msg.msg_control = NULL;
+  msg.msg_controllen = 0;
+  msg.msg_flags = 0;
+
+  retval = sendmsg(sockfd, &msg, 0);
+
+  if (retval <= 0) {
+    printf("DroidGuardian: Error sending answer to module.\n");
+    perror("sendmsg");
+    return -1;
+  }
+
+  return retval;
 }
 
 
 int main(int argc, char* argv[])
 {
 
-        if (argc != 2) {
-          printf("Usage: $ %s <string>\n",argv[0]);
-          return 0;
-        }
-
-	int s, s2, len, slen;
+	int s, s2;
 	socklen_t t;
 	struct sockaddr_un local, remote;
-	char* data = argv[1];
+	struct dg_query query;
 
-	printf("print data: %s\n",data);
 
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
 		perror("socket");
@@ -67,11 +78,11 @@ int main(int argc, char* argv[])
 
 	unlink(local.sun_path);
 
-	len = strlen(local.sun_path) + sizeof(local.sun_family);
-	if (bind(s, (struct sockaddr *)&local, len) == -1) {
+	if (bind(s, (struct sockaddr *)&local, sizeof(local)) == -1) {
 		perror("bind");
 		exit(1);
 	}
+	
 
 	if (listen(s, 5) == -1) {
 		perror("listen");
@@ -79,21 +90,21 @@ int main(int argc, char* argv[])
 	}
 
 	printf("Waiting for a connection...\n");
-	
-	t = sizeof(remote);
-	if ((s2 = accept(s, (struct sockaddr *)&remote, &t)) == -1) {
-		perror("accept");
-		exit(1);
+
+	for(;;) {
+
+		t = sizeof(remote);
+		if ((s2 = accept(s, (struct sockaddr *)&remote, &t)) == -1) {
+			perror("accept");
+			exit(1);
+		}
+
+		printf("Connected.\n");
+
+		recv_query_from_module(s2, &query);
+
+		send_answer_to_module(s2, &query);
 	}
-
-	printf("Connected.\n");
-
-	slen = send_msg_to_client(s2, data);
-
-	if(slen < 0)
-		perror("send");
-
-	close(s2);
 
 	return 0;
 }
