@@ -1,0 +1,32 @@
+\section{{Quimera Implementation}} \label{ss:tech}
+
+\quim\ system follows a typical web-application schema: a server-client framework connects users to a server, where submissions and system data are recorded.
+\quim\ User Interface is rendered in \textsf{HTML 5}, \textsf{CSS 3} and \textsf{Javascript}, optimized for the last generation browsers but also compatible with older browsers without loosing any features.
+%It also provides some client-side animations to improve experience, for this \quim\ uses \textsf{MooTools}\footnote{\url{http://mootools.net/}}, a javascript object-oriented framework.
+
+The system runs on any \textsf{PHP 5.3-enabled} platform over \textsf{HTTP} and \textsf{HTTPS} protocols, and it is based on the \textsf{Symfony2}\footnote{\url{http://symfony.com}} framework.
+The essential application data is stored in a \textsf{MySQL} database, although the data layer of \textsf{Symfony2} (managed by \textsf{Doctrine2} technology) allows to use any other database engine.
+\textsf{Twig} template manager, embedded in this framework, is used to render HTML5 templates from the view layer.
+
+%To do the source code analysis, we developed a service from \textsf{Symfony2}, to enable expansibility.
+%Now we describe its modules.
+To compile the submitted solutions, the system uses the \textsf{GCC} compiler.
+For the static analysis, it was developed a plugin for \textsf{Frama-C}\footnote{\url{http://frama-c.com}}, a framework dedicated to the static analysis of source code written in C.
+This powerful platform works as a front-end for the plugin, once its kernel provides common functionalities, libraries and collaborative data structures, which simplifyies the development process and improves the final results.
+\textsf{CIL}\footnote{C Intermediate Language \url{http://cil.sourceforge.net/}} library provides methods to  generate the \textsf{Abstract Syntax Tree (AST)} for the source code and to traverse the tree.
+The plugin analyzes the AST for each submitted source file and evaluates a set of metrics (described in section~\ref{ss:metrics}) with a single traversal, to obtain quantitative information about the  quality of the  source code.
+
+%For the dynamic analysis, each submitted program is executed over a set of input data; the obtained output is then compared with the  set of output values expected for the problem being solved.
+
+Quimera's Cloning detection is based on regular expressions, string comparisons and sorting algorithms from PHP, to detect duplicated lines of code in the submission.
+
+In order to detect plagiarism, it was used the tool \textsf{sherlock}\footnote{\url{http://sydney.edu.au/engineering/it/~scilect/sherlock/}}, which makes comparisons based on source code signatures, and compare them with related submitted code.
+This tool supports its comparison algorithm in a \emph{Originality Index} that computes the ratio between similarities and differences detected in each pair of files.
+This plugin produces a final result that contemplates all these evaluation parameters as well as the final grade assessed by the system, as described in section~\ref{ss:formula}.
+
+\quim\ provides several statistical graphics related with a contest flow (as described in section~\ref{s:stats}), rendered with \textsf{Google Chart Tools\footnote{\url{http://code.google.com/intl/en-US/apis/chart/}}}.
+
+
+
+
+

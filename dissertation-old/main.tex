@@ -1,0 +1,198 @@
+\documentclass[a4paper,12pt,twoside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage[implicit=true, colorlinks=true, linkcolor=RefBlack, citecolor=RefBlack, urlcolor=RefBlack]{hyperref}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+%\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{dsfont}
+\usepackage{xspace}
+\usepackage{color}
+\usepackage{multirow}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{epigraph}
+\usepackage{fancybox}
+\usepackage{url}
+\usepackage{alltt}
+\usepackage{booktabs,colortbl,tabularx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{pdfpages}
+\usepackage[section] {placeins}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[acronym]{glossaries}
+
+\renewcommand{\arraystretch}{1.5}
+%\setlength{\parskip}{1cm plus4mm minus3mm}
+
+\input{lpdefs.tex}
+\input{glossaries.tex}
+
+\lstdefinestyle{BashInputStyle}{
+  language=bash,
+  basicstyle=\small\sffamily,
+  numbers=none,
+  numberstyle=\tiny,
+  numbersep=3pt,
+  frame=tb,
+  columns=fullflexible,
+}
+
+\lstdefinestyle{JavaInputStyle}{
+  language=Java,
+  basicstyle=\small\sffamily,
+  numbers=none,
+  numberstyle=\tiny,
+  numbersep=3pt,
+  frame=tb,
+  columns=fullflexible,
+}
+
+\lstdefinestyle{CInputStyle}{
+  language=C,
+  basicstyle=\small\sffamily,
+  numbers=none,
+  numberstyle=\tiny,
+  numbersep=3pt,
+  frame=tb,
+  columns=fullflexible,
+}
+
+
+\lstset{ %
+language=C,                % choose the language of the code
+basicstyle=\footnotesize\ttfamily,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=bt,           % adds a frame around the code
+tabsize=2,          % sets default tabsize to 2 spaces
+captionpos=b,           % sets the caption-position to bottom
+breaklines=true,        % sets automatic line breaking
+breakatwhitespace=false    % sets if automatic breaks should only happen at whitespace
+}
+
+\renewcommand{\labelitemii}{$\cdot$}
+
+
+\allowdisplaybreaks[3]
+
+%\usepackage{setspace}
+%\onehalfspacing
+
+\newcommand{\rw}[1]{{\color{blue}\textbf{#1}}}
+
+\definecolor{quotationcolour}{HTML}{F0F0F0}
+\definecolor{quotationmarkcolour}{HTML}{1F3F81}
+\definecolor{enph}{HTML}{FF4040}
+
+% Double-line for start and end of epigraph.
+\newcommand{\epiline}{\hrule \vskip -.2em \hrule}
+% Massively humongous opening quotation mark.
+\newcommand{\hugequote}{%
+  \fontsize{32}{38}\selectfont \color{quotationmarkcolour} \textbf{``}
+  \vskip -.5em
+}
+
+
+\begin{document}
+\sloppy
+\frontmatter
+
+%capa da tese
+%\includepdf[pages=-]{cover/cover.pdf}
+%capa SDUM
+%\includepdf[pages=-]{capa/capa_sdum.pdf}
+
+
+\input{dedication.tex}
+
+\pagenumbering{roman} \setcounter{page}{1}
+
+\chapter*{Acknowledgements}
+\input{acknowledgements.tex}
+
+\chapter*{Resumo}
+\input{abstractPT.tex}
+
+\chapter*{Abstract}
+\input{abstract.tex}
+
+\cleardoublepage
+\pagenumbering{Roman}\setcounter{page}{1}
+\tableofcontents
+%\ensurebackpageblank
+
+\listoffigures
+\addcontentsline{toc}{chapter}{Figures}
+%\ensurebackpageblank
+
+\listoftables
+\addcontentsline{toc}{chapter}{Tables}
+%\ensurebackpageblank
+
+%GLOSSARIES
+\printglossary[type=\acronymtype]
+\addcontentsline{toc}{chapter}{Acronyms}
+%\ensurebackpageblank
+
+
+
+\mainmatter
+%--------------------------------------------------------------------------
+\chapter{Introduction}
+\label{chap:introduction}
+\input{introduction}
+
+\chapter{Android Overview}
+\label{chap:android_overview}
+\input{overview}
+
+\chapter{Android Security}
+\label{chap:android_security}
+\input{security}
+
+\chapter{Related work}
+\label{chap:background}
+\input{background}
+
+\chapter{Technical concepts}
+\label{chap:technical_concepts}
+\input{technical_concepts}
+
+\chapter{Implementing Droidguardian}
+\label{chap:implementing_dg}
+\input{implementing_dg}
+
+\chapter{Using Droidguardian}
+\label{chap:using_dg}
+\input{using_dg}
+
+\chapter{Conclusion}
+\label{chap:conclusion}
+\input{conclusion}
+
+%%%%% END OF THESIS CONTENT %%%%%%%
+\renewcommand{\bibname}{References}
+\bibliographystyle{ieeetr}
+\bibliography{bibliography.bib}
+\addcontentsline{toc}{chapter}{References}
+
+%\appendix
+%\chapter{User manual in Portuguese}\label{appManual}
+%\thispagestyle{empty} \cleardoublepage
+%\includepdf[pages=5-68, nup=1x1, frame=true, link=true, linkname=anexomanual]{ManualUtilizador.pdf} 
+    
+
+\end{document}

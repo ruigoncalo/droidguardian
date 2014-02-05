@@ -7,16 +7,32 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#define SOCK_PATH "/data/data/com.rmgoncalo/dgsocket"
+#define SOCK_PATH "/tmp/usocket"
+
+#define IPADDR_SIZE 15
+#define PORT_SIZE 32
+#define PID_SIZE 32
+#define PROCNAME_SIZE 64
+#define MSG_SIZE (IPADDR_SIZE + PORT_SIZE + PID_SIZE + PROCNAME_SIZE + 4)
 
 struct dg_query {
-  	int server;
-	int port;
+  	char ip[IPADDR_SIZE];
+  	int ip_size;
+	unsigned short port;
 	int pid;
+	char  proc_name[PROCNAME_SIZE];
+	int proc_name_size;
+	int permission;
+	int lifetime;
 };
 
 
-int main(){
+int main(int argc, char* argv[]){
+
+	if(argc != 5){
+		perror("argc");
+		exit(1);
+	}
 
 	int sockfd;
 	ssize_t slen, rlen;
@@ -26,11 +42,20 @@ int main(){
 
 	query = (struct dg_query *) malloc(sizeof(struct dg_query));
 
-	query->server = 1234;
-	query->port = 50;
-	query->pid = 4321;
+	query->ip_size = strlen(argv[1]);
+	strncpy(query->ip, argv[1], query->ip_size);
+	query->ip[query->ip_size] = '\0';
+
+	query->port= atoi(argv[2]);
+	query->pid = atoi(argv[3]);
+
+	query->proc_name_size = strlen(argv[4]);
+	strncpy(query->proc_name, argv[4], query->proc_name_size);
+	query->proc_name[query->proc_name_size] = '\0';
+
 	query_size = (size_t) sizeof(struct dg_query);
 
+	printf("%s;%d;%hu;%d;%s;%d\n", query->ip, query->ip_size, query->port, query->pid, query->proc_name, query->proc_name_size);
 	sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
 
 	if( sockfd < 1 ){
@@ -38,7 +63,7 @@ int main(){
 		exit(1);
 	}
 
-	printf("DG: Trying to connect...\n");
+	printf("Droidguardian: Trying to connect...\n");
 
 	memset(&remote, 0, sizeof(remote));
 
@@ -50,7 +75,7 @@ int main(){
     	exit(1);
   	}
 
-  	printf("DG: Connected.\n");
+  	printf("Droidguardian: Connected.\n");
 
   	slen = send(sockfd, (void *) query, query_size, 0);
 
@@ -59,16 +84,17 @@ int main(){
   		exit(1);
   	}
 
-  	printf("DG: Query sent.\n");
+  	printf("Droidguardian: Query sent.\n");
 
-  	//rlen = recv(sockfd, (void *) query, query_size, 0);
+  	rlen = recv(sockfd, (void *) query, query_size, 0);
 
-  	//if(rlen <= 0){
-  	//	perror("recv");
-  	//	exit(1);
-  	//}
+  	if(rlen <= 0){
+  		perror("recv");
+  		exit(1);
+  	}
 
-  	printf("DG: server: %d, port, %d, pid: %d.\n",query->server, query->port, query->pid);
+  	printf("Droidguardian: ip: %s, port, %hu, pid: %d, process: %s, permission: %d, lifetime: %d.\n",
+  							query->ip, query->port, query->pid, query->proc_name, query->permission, query->lifetime);
 
   	close(sockfd);
 

@@ -1,0 +1,31 @@
+\renewcommand{\glossarymark}[1]{\markboth{\MakeUppercase{#1}}{\MakeUppercase{#1}}}
+\renewcommand{\glsclearpage}{\cleardoublepage}
+\setlength{\glspagelistwidth}{\textwidth}
+\setlength{\glslistdottedwidth}{.75\hsize}
+
+\makeatletter
+\newcommand\ackname{Acknowledgements}
+\if@titlepage
+  \newenvironment{acknowledgements}{%
+      \titlepage
+      \null\vfil
+      \@beginparpenalty\@lowpenalty
+      \begin{center}%
+        \bfseries \ackname
+        \@endparpenalty\@M
+      \end{center}}%
+     {\par\vfil\null\endtitlepage}
+\else
+  \newenvironment{acknowledgements}{ %
+      \if@twocolumn
+        \section*{\ackname}%
+      \else
+        \small
+        \begin{center}%
+          {\bfseries \ackname\vspace{-.5em}\vspace{\z@}}%
+        \end{center}%
+        \quotation
+      \fi}
+      {\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother

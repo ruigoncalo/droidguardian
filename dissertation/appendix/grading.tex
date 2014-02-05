@@ -1,0 +1,22 @@
+\section{Automatic Grading}\label{s:grading}
+
+For a better comprehension of this summary and the grading process, let us now introduce one example of a contest where \textsf{Competitors} are invited to solve several mathematical problems. %, like the one proposed on Figure~\ref{fig:enunc}.
+The challenge is to present a solution to calculate the \emph{n$^{th}$} fibonacci number, where \emph{n} is a number asked to the user.
+In Figure~\ref{fig:answers}, we are comparing two different solutions proposed by two \textsf{Teams}: the \textsf{Rationals} on the left-hand size, and \textsf{Smarties} on the right-hand size.
+
+The first solution, assessed by the system with "Solved Some Tests" (as we can see in Figure~\ref{fig:problem}), only calculates correctly the first and second numbers of the sequence (0 and 1) and, consequently only passes in 22\% of the tests (2 in 9).
+This leads to a final score on the \emph{Execution} field of only 22.2\%. 
+In a closer look, we can conclude that this answer is well documented (it has 15 commented lines in 50 lines of code) and its \emph{Legibility} has a final score of 93\%.
+Its \emph{Complexity} score of 73\% is owed to its number of used variables and data structures.
+Its 50 lines of code exceed the average size of the contest submissions for this problem, which penalizes its final grade on the \emph{Dimension} category (only 45.2\%).
+In the \emph{Consistency} category, its 21.6\% are owed to the use of several returns through the code (assuming a maximum of two returns per function as a reasonable limit to the source code consistency) and also to the use of pointers.
+
+The second one, assessed by the system with "Solved" (as depicted in Figure~\ref{fig:problem}), follows an iterative strategy to implement the Fibonacci recurrence. 
+This answer is better documented (11 commented lines in 36 lines of code), but its \emph{Legibility} has a lower final score (88\%) once it did not used \emph{defines}, as the other solution.
+Its \emph{Complexity} score of 58\% is owed to the implemented \emph{loop}.
+Its 36 lines of code improve its final grade on the \emph{Dimension} category to 88.6\%.
+In the \emph{Consistency} category, its weak 22\% are also owed to the use of several returns through the code.
+
+Finally we can conclude that both solutions have not been plagiarized (100\% original) and \emph{Competitors} follow the good practice of no repeating their own code (0\% of duplicated code).
+These assessments led to a final grade of 29\% on the first case and a significant 89\% on the second case.
+\quim\ also completes this evaluation with radial charts to a quicker and easier comparison of the solution performance in the different grading categories.

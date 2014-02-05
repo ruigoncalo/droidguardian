@@ -1,0 +1,61 @@
+Since this project involves the development of an Android application, even though it runs a bit off the scope of common applications, it was mandatory to get a deep understanding of Android architecture and components. This chapter introduces these topics.
+
+\section{Android Architecture}
+\label{sec:android_architecture}
+
+\input{architecture}
+
+\section{Android Components}
+
+The following sections present the Android components by which applications consists of. Each component was designed to develop a special role in the application's life and some rules need to be carried out in order to get the desired behavior as well as efficiency. 
+
+\subsection{Activities}
+
+Android provides the application's visual interface through the \textit{Activity} component. Once created, it exhibits elements that users can interact with, like buttons, text boxes, spinners, etc. When developers are implementing Android activities, concepts regarding visual design must be taken into account so that users may have a pleasant experience. Regular applications have several activities, because the visual interface changes according to the user's desire, while he keeps tapping and clicking along the application's execution. Android provides mechanisms to save activities state when they are paused or stopped and keeps them in a stack so that they can be restarted later. This process is presented in \autoref{fig:act_lifecycle} that illustrates the activity lifecycle \cite{Activity:Android}.
+
+\begin{figure}[h]
+ \begin{center}
+ \includegraphics[scale=0.5]{figures/activity_lifecycle.png}
+ \end{center}
+ \caption{The activity lifecycle}
+ \label{fig:act_lifecycle}
+\end{figure}
+
+Activities begin the execution calling \texttt{onCreate()} that, usually, defines the layout for the activity's user interface. The activity becomes visible when \texttt{onStart()} runs. Once the activity is visible, \texttt{onResume()} takes place and the activity just stops being visible when another activity comes to the foreground. When this happens, \texttt{onPause()} is called. If the system needs memory to execute activities with higher priority, the activity is killed. If the activity is requested to run again, it can continue the previous task. The activity may also be stopped through \texttt{onStop()}. While stopped it cannot go back to the previous task, but might be restarted through \texttt{onRestart()}. At last, the activity is destroyed calling \texttt{onDestroy()}. The activity's lifecycle ends.
+
+\subsection{Services}
+
+When developers intend to launch some task that has no visible elements they use \textit{Services}. This component is designed to perform long running operations in the background. For this reason, a service is able to run even if the component that called it, or even the application, stops its execution. Services usually take care of operations like internet downloads, music playing, etc.
+
+\begin{figure}[h]
+ \begin{center}
+ \includegraphics[scale=0.5]{figures/service_lifecycle.png}
+ \end{center}
+ \caption{The service lifecycle}
+ \label{fig:serv_lifecycle}
+\end{figure}
+
+Services may be called in two distinct ways. An application component, as an activity, may start a service calling \texttt{startService()}. It may run in the background  indefinitely, even if the component that started it is destroyed. After completes its operations, the service should stop itself.
+
+In the other way, a service can be bound to an application component, if this binds to it by calling \texttt{bindService()}. In this case, the service executes using a service-client interface providing interaction with components, as sending requests, getting results, etc. A bound service runs while it is bound to some application component, being destroyed after that. Note that the same service may assume both forms, unbound and bound.
+
+The service lifecycle shows these two approaches in \autoref{fig:serv_lifecycle}  \cite{Service:Android}. On the left side we can see that an unbounded service starts its work by calling \texttt{onStartCommand()}. After performing it may be stopped by a client or by itself, calling \texttt{onDestroy()}. In a bounded service, \texttt{onBind()} starts its execution and when all clients unbind the service, it calls \texttt{onUnbind()} and \texttt{onDestroy()}.
+
+Services play a major role in the scope of this project, because it's through a service that Droidguardian is able to perform indefinitely in the background, being started when the device boots, as we will explain further.
+
+\subsection{Broadcast Receivers}
+
+Broadcast receivers are built to handle events created by applications or by the system. Receivers are designed to perform a certain action when notified that some event occurred. For instance, a receiver can be set to start an activity when the device boots. The developer registers the action \texttt{BOOT\_COMPLETED} wrapped in a package called \textit{intent}. When the system performs this action, sends the package to the receiver. The receiver checks the action inside. If it is the desired action, the receiver sends another package to the system requesting an activity to start. Receivers must always be associated with intents. An \textit{Intent} is a messaging object that connects all components in an Android applications by allowing them to be invoked and share some data \cite{Intents:Android}. \autoref{fig:broadcast_rec} exhibits the way application components use intents to communicate.
+
+\begin{figure}[h]
+ \begin{center}
+ \includegraphics[scale=0.5]{figures/broadcast_receiver.png}
+ \end{center}
+ \caption{Broadcasting an intent to start an activity}
+ \label{fig:broadcast_rec}
+\end{figure}
+
+
+\subsection{Content Providers}
+
+It is common that Android applications need to access and share some resources in order to provide the user useful features. These resources can be user's personal data, as videos, audio, images, contacts, etc. Android supplies a consistent standard interface to data that also handles \gls{ipc} and secure data access. \textit{Content providers} offer this mechanism as an application component, by which it allows the application to access a data repository. Providers are primarily designed to be used by other applications, even though they can be called only to manage its application's internal data. Providers present data to external applications using a relational database like interface, providing CRUD (create, retrieve, update and delete) functions and a \gls{uri} system \cite{Providers:Android}.

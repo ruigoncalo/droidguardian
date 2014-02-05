@@ -1,0 +1,5 @@
+\newcommand\fancyref[1]{ %
+  \hyperref[#1]{\cref*{#1}: \nameref*{#1}}
+}
+
+\newcommand{\reminder}[1]{\fbox{{\color{blue} #1}}}

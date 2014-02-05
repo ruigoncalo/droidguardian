@@ -1,0 +1,66 @@
+%!TEX root = dissertation.tex
+
+\makeatletter
+\begin{titlepage}
+\setcounter{page}{-1}
+\thispagestyle{empty}
+
+
+% UM_ENg Logo
+\def \UMEng {\begin{tikzpicture}[
+	% bars styling,
+	logone/.style={rectangle,fill=white,rounded corners=0.08cm,minimum width=0.16cm,inner sep=0pt},
+	bigone/.style={minimum height=0.74cm},
+	smaone/.style={minimum height=0.48cm},
+	engone/.style={minimum height=0.86cm},
+	pos1/.style={xshift=1.3cm,yshift=1.3cm},
+	pos2/.style={xshift=3.9cm,yshift=1.3cm}]
+	
+	% Uminho logo
+	\fill[fill=um] (0,0) -- (2.6,0) -- (2.6,2.6) -- (0,2.6) -- cycle;
+	\foreach \i in {1,...,3}{
+		\node at (\i*120+30:0.45)[logone,bigone,pos1,rotate=\i*120-60]{};
+		\node at (\i*120+90:0.60)[logone,smaone,pos1,rotate=\i*120]{};
+	}
+
+	% EngUminho logo
+	\fill[fill=eng] (2.6,0) -- (5.2,0) -- (5.2,2.6) -- (2.6,2.6) -- cycle;
+	\foreach \i in {1,...,5}
+		\node at (\i*72-90:0.74)[engone,logone,pos2,rotate=\i*72-90]{};
+\end{tikzpicture}}
+
+%Logo
+\centering
+	\vspace{-1cm}
+	\UMEng
+
+{\centering 
+    \textcolor{grey}{\large\textbf{Universidade do Minho} \\ Escola de Engenharia \\ Departamento de  Informática} \\
+    \vspace{1cm}
+    \textcolor{grey}{\textbf{Master Course in Computing Engineering}} \\
+
+\vspace{4.5cm}
+
+\textcolor{grey}{{\large {\@author}}} \\
+\vspace{1.5cm}
+\textcolor{grey}{{\Large \textbf{\@title}}} \\
+\vspace {2cm}
+}
+
+\flushleft{\textcolor{grey}{{\Large Master dissertation}}}
+\vspace{0.5cm}
+
+\flushleft{\textcolor{grey}{ \emph{Supervised by:}}
+\vspace{0.2cm}
+\textcolor{grey}{\supervisor}
+}
+
+\vspace {1.5cm}
+
+\textcolor{grey}{\textbf{Braga, \@date}} \\
+
+\pagebreak
+
+
+\end{titlepage}
+\makeatother

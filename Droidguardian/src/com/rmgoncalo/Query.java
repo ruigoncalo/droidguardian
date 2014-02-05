@@ -2,64 +2,81 @@ package com.rmgoncalo;
 
 public class Query {
 	
-	static {
-		System.loadLibrary("dgquery");
+	public static final String tag = "Query";
+
+	private String address;
+	private String port;
+	private String pid;
+	private String processName;
+	private String permission;
+	private String lifetime;	
+	
+	public Query(String msg){
+		this.setAddress(new String());
+		this.setPort(new String());
+		this.setPid(new String());
+		this.setProcessName(new String());
+		
+		this.handleString(msg);
 	}
 	
-	private int server;
-	private int port;
-	private int pid;
-	private int lifetime;
-	private int permission;
-	
-	public Query(){
-		this.setServer(0);
-		this.setPort(0);
-		this.setPid(0);	
-		this.setLifetime(0);
-		this.setPermission(0);
-	}
-	
-	public native void updateVars() throws Exception;
-	
-	public int getServer() {
-		return server;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setServer(int server) {
-		this.server = server;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public int getPort() {
+	public String getPort() {
 		return port;
 	}
-	
-	public int getLifetime(){
-		return lifetime;
-	}
-	
-	public int getPermission(){
-		return permission;
-	}
 
-	public void setPort(int port) {
+	public void setPort(String port) {
 		this.port = port;
 	}
 
-	public int getPid() {
+	public String getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(String pid) {
 		this.pid = pid;
 	}
-	
-	public void setLifetime(int lifetime){
+
+	public String getProcessName() {
+		return processName;
+	}
+
+	public void setProcessName(String processName) {
+		this.processName = processName;
+	}
+
+	public String getPermission() {
+		return permission;
+	}
+
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
+
+	public String getLifetime() {
+		return lifetime;
+	}
+
+	public void setLifetime(String lifetime) {
 		this.lifetime = lifetime;
 	}
-	
-	public void setPermission(int permission){
-		this.permission = permission;
+
+	private void handleString(String msg){
+		
+		String[] result = msg.split(";");
+		
+		setAddress(result[0]);
+		setPort(result[1]);
+		setPid(result[2]);
+		setProcessName(result[3]);
+		
 	}
 
 }

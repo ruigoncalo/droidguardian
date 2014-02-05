@@ -1,6 +1,6 @@
-/Users/rmgoncalo/EclipseProjects/Droidguardian/obj/local/armeabi/objs/dgquery/com_rmgoncalo_Query.o: \
- /Users/rmgoncalo/EclipseProjects/Droidguardian/jni/com_rmgoncalo_Query.c \
- /Users/rmgoncalo/EclipseProjects/Droidguardian/jni/com_rmgoncalo_Query.h \
+/Users/rmgoncalo/Dropbox/Tese/droidguardian/Droidguardian/obj/local/armeabi/objs/dgquery/com_rmgoncalo_Query.o: \
+ /Users/rmgoncalo/Dropbox/Tese/droidguardian/Droidguardian/jni/com_rmgoncalo_Query.c \
+ /Users/rmgoncalo/Dropbox/Tese/droidguardian/Droidguardian/jni/com_rmgoncalo_Query.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/jni.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/cdefs.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -10,6 +10,7 @@
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/_types.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/machine/_types.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/_wchar_limits.h \
+ /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/android/log.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/stdio.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/types.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/posix_types.h \
@@ -69,7 +70,7 @@
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/capability.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/pathconf.h
 
-/Users/rmgoncalo/EclipseProjects/Droidguardian/jni/com_rmgoncalo_Query.h:
+/Users/rmgoncalo/Dropbox/Tese/droidguardian/Droidguardian/jni/com_rmgoncalo_Query.h:
 
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/jni.h:
 
@@ -88,6 +89,8 @@
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/machine/_types.h:
 
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/_wchar_limits.h:
+
+/Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/android/log.h:
 
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/stdio.h:
 

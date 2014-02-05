@@ -7,10 +7,13 @@
     <string name="sock_path">Socket Path</string> 
     <string name="dialog_message">query message</string>
     <string name="dialog_title">Custom Title</string>
-    <string name="dialog_positive_text">Allow</string>
+    <string name="allow">Allow</string>
     <string name="dialog_positive_toast_message">You clicked Yes!</string>
-    <string name="dialog_negative_text">Deny</string>
+    <string name="deny">Deny</string>
     <string name="dialog_negative_toast_message">You clicked No!</string>
+    <string name="start_service">Start</string>
+    <string name="stop_service">Stop</string>
+    <string name="help">Help</string>
     <string name="forever">Forever</string>
     <string name="until_quit">Until Quit</string>
     <string name="until_logout">Until Logout</string>
@@ -18,9 +21,6 @@
     <string name="once">Once</string>
     <string-array name="lifetime_options">
         <item>Forever</item>
-        <item>Until Quit</item>
-        <item>Until Logout</item>
-        <item>Until Restart</item>
         <item>Once</item>
     </string-array>
 

@@ -1,0 +1,32 @@
+\renewcommand{\chaptermark}[1] % 
+{\markboth{\chaptername\ \thechapter.\ #1}{}} 
+
+\renewcommand{\sectionmark}[1] % 
+{\markright{\thesection.\ #1}}
+
+\renewcommand{\headfont}{\bfseries\fontsize{9}{11}\selectfont}
+\renewcommand{\pnumfont}{\bfseries\fontsize{9}{11}\selectfont}
+
+\newpagestyle{fancy}{(0pt,0pt)                          % Outer header line
+                    {\MakeUppercase{\headmark} \hfill}   % Even page header
+                    {\hfill \MakeUppercase{\headmark}}   % Odd page header
+                    {}                            % Onesided page header
+                    (\textwidth,0.5pt)}                 % Inner header line
+                    {(\textwidth,0.5pt)                 % Inner footer line 
+                    {\pagemark \hfill}                   % Even page footer
+                    {\hfill \pagemark}                   % Odd page footer
+                    {\hfill \pagemark \hfill}             % Onesided page footer
+                    (0pt,0pt)}                          % Outer footer line
+
+\renewpagestyle{plain}{(0pt,0pt)              % Outer header line
+                      {}                % Even page header
+                      {}                % Odd page header
+                      {}                % Onesided page header
+                      (0pt,0pt)}              % Inner header line
+                      {(\textwidth,0.5pt)     % Inner footer line 
+                      {\pagemark \hfill}       % Even page footer
+                      {\hfill \pagemark}       % Odd page footer
+                      {\hfill \pagemark \hfill} % Onesided page footer
+                      (0pt,0pt)}              % Outer footer line
+
+\renewcommand*{\partpagestyle}{empty} 

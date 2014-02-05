@@ -1,0 +1,166 @@
+
+% book example for classicthesis.sty
+\documentclass[
+  % Replace twoside with oneside if you are printing your thesis on a single side
+  % of the paper, or for viewing on screen.
+  oneside,
+  %twoside,
+  11pt, a4paper,
+  footinclude=true,
+  headinclude=true,
+  cleardoublepage=empty
+]{scrbook}
+
+\usepackage{lipsum}
+\usepackage[linedheaders,parts,pdfspacing]{classicthesis}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{acronym}
+\usepackage{dissertation}
+
+% Title
+\title{DroidGuardian: An Application Firewall for Android OS-based Devices}
+
+% Author
+\author{Rui Miguel de Carvalho Videira Gonçalo}
+
+% Supervisor
+\def\supervisor{%
+	Victor Francisco Fonte
+}
+
+% Date
+\date{\today}
+
+%%Defines
+%\def \... {..}
+
+\makeglossaries  %  either use this ...
+
+\makeindex	% ... or this
+
+\begin{document}
+	
+% Add acronym definitions
+    
+% Cover page ---------------------------------------------
+\sf
+	\pagenumbering{alph}
+	\pagestyle{empty}
+	\input{def/title}
+\rm
+	\cleardoublepage
+%---------------------------------------------------------
+% Add acknowledgements
+
+\chapter*{Acknowledgements}
+
+	\cleardoublepage
+	
+% Add abstracts (en,pt) -----------------------------------------------------------
+\chapter*{Abstract}
+	\input{abstract}
+
+	\cleardoublepage
+
+\chapter*{Resumo}
+	\input{resumo}
+
+	\cleardoublepage
+	
+	\pagenumbering{roman}
+	\setcounter{page}{3}
+	%pagestyle{fancy}   % -------- removed
+	\rm
+	
+	% Document
+	\cleardoublepage
+    \phantomsection
+    \addcontentsline{toc}{chapter}{Contents}
+	\tableofcontents
+	
+	\cleardoublepage
+	\listoffigures
+	
+	\cleardoublepage
+	\listoftables
+	
+	\cleardoublepage
+	\lstlistoflistings
+	
+	% Add list of acronyms
+	\cleardoublepage
+	\pagenumbering{arabic}
+	\setcounter{page}{3}
+
+\part{Introductory material}
+
+%--------------------------------------------------------------------------
+\chapter{Introduction}
+\label{chap:introduction}
+\input{introduction}
+
+\chapter{Android Overview}
+\label{chap:android_overview}
+\input{overview}
+
+\chapter{Android Security}
+\label{chap:android_security}
+\input{security}
+
+\chapter{Related work}
+\label{chap:background}
+\input{background}
+
+%\part{Core of the dissertation}
+\chapter{Technical concepts}
+\label{chap:technical_concepts}
+\input{technical_concepts}
+
+\chapter{Implementing Droidguardian}
+\label{chap:implementing_dg}
+\input{implementing_dg}
+
+\chapter{Using Droidguardian}
+\label{chap:using_dg}
+\input{using_dg}
+
+\chapter{Conclusion}
+\label{chap:conclusion}
+\input{conclusion}
+%--------------------------------------------------------------------------
+
+\bookmarksetup{startatroot} % Ends last part.
+\addtocontents{toc}{\bigskip} % Making the table of contents look good.
+\cleardoublepage
+
+%----------------- Bibliography (needs bibtex) --------------------------------%
+\bibliography{bibliography}
+%----------------- Index of terms (needs  makeindex) --------------------------%
+\printindex
+%------------------------------------------------------------------------------%
+	
+	\appendix
+	\renewcommand\chaptername{Appendix}
+
+	% Add appendix chapters
+
+\part{Apendices}
+
+\chapter{Support work}
+	Auxiliary results which are not main-stream
+
+\chapter{Details of results}
+         Details of results whose length would compromise readability of main text.
+
+\chapter{Listings}
+	Should this be the case
+
+\chapter{Tooling}
+	(Should this be the case)
+
+	Anyone using \Latex\ should consider having a look at \TUG,
+	the \tug{\TeX\ Users Group}
+	
+\end{document}
+
