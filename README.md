@@ -1,10 +1,8 @@
 droidguardian
 =============
 
-DroidGuardian tool for Android OS security
+DroidGuardian is an application firewall for Android.
 
-- lsm-linux:
-  - place files in /security folder in the Linux kernel (v3.11.1)
+DroidGuardian allows users to receive alert dialogs when an outgoing internet connection is requested by any app (or Unix process). This tool intercepts all internet socket connection requests at kernel level and analizes them using a native JNI library. Based on rules, connection attempts may be displayed to the user that has the power to either accept or reject such connections.
 
-- dissertation-chapters:
-  - draft chapters to include in the dissertation
+This is a first protoptype of a security feature that help users to be aware of what internet connections are their apps doing.
