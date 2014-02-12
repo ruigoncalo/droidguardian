@@ -15,8 +15,21 @@
 \usepackage[linedheaders,parts,pdfspacing]{classicthesis}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage{acronym}
+\usepackage[acronym]{glossaries}
 \usepackage{dissertation}
+\usepackage[implicit=true, colorlinks=true, linkcolor=RefBlack, citecolor=RefBlack, urlcolor=RefBlack]{hyperref}
+\usepackage{amssymb}
+
+
+\usepackage{dsfont}
+\usepackage{xspace}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{url}
+\usepackage{alltt}
+\usepackage{float}
+\usepackage{pdfpages}
 
 % Title
 \title{DroidGuardian: An Application Firewall for Android OS-based Devices}
@@ -40,9 +53,10 @@
 \makeindex	% ... or this
 
 \begin{document}
-	
+\sloppy
+
 % Add acronym definitions
-    
+
 % Cover page ---------------------------------------------
 \sf
 	\pagenumbering{alph}
@@ -51,7 +65,6 @@
 \rm
 	\cleardoublepage
 %---------------------------------------------------------
-% Add acknowledgements
 
 \chapter*{Acknowledgements}
 
@@ -59,12 +72,12 @@
 	
 % Add abstracts (en,pt) -----------------------------------------------------------
 \chapter*{Abstract}
-	\input{abstract}
+	%\input{abstract}
 
 	\cleardoublepage
 
 \chapter*{Resumo}
-	\input{resumo}
+	%\input{resumo}
 
 	\cleardoublepage
 	
@@ -89,6 +102,8 @@
 	\lstlistoflistings
 	
 	% Add list of acronyms
+	\input{glossaries.tex}
+	
 	\cleardoublepage
 	\pagenumbering{arabic}
 	\setcounter{page}{3}
@@ -98,36 +113,42 @@
 %--------------------------------------------------------------------------
 \chapter{Introduction}
 \label{chap:introduction}
-\input{introduction}
+\input{chapters/introduction}
 
 \chapter{Android Overview}
 \label{chap:android_overview}
-\input{overview}
+\input{chapters/overview}
 
 \chapter{Android Security}
 \label{chap:android_security}
-\input{security}
+\input{chapters/security}
 
 \chapter{Related work}
 \label{chap:background}
-\input{background}
+\input{chapters/background}
 
-%\part{Core of the dissertation}
+\chapter{Linux Security Modules}
+\label{chap:lsm}
+\input{chapters/lsm}
+
+\part{Core of the dissertation}
+
+%--------------------------------------------------------------------------
 \chapter{Technical concepts}
 \label{chap:technical_concepts}
-\input{technical_concepts}
+\input{chapters/technical_concepts}
 
 \chapter{Implementing Droidguardian}
 \label{chap:implementing_dg}
-\input{implementing_dg}
+\input{chapters/implementing_dg}
 
 \chapter{Using Droidguardian}
 \label{chap:using_dg}
-\input{using_dg}
+\input{chapters/using_dg}
 
 \chapter{Conclusion}
 \label{chap:conclusion}
-\input{conclusion}
+\input{chapters/conclusion}
 %--------------------------------------------------------------------------
 
 \bookmarksetup{startatroot} % Ends last part.
@@ -135,7 +156,11 @@
 \cleardoublepage
 
 %----------------- Bibliography (needs bibtex) --------------------------------%
+%\bibliography{bibliography}
+
 \bibliography{bibliography}
+
+
 %----------------- Index of terms (needs  makeindex) --------------------------%
 \printindex
 %------------------------------------------------------------------------------%
@@ -149,18 +174,6 @@
 
 \chapter{Support work}
 	Auxiliary results which are not main-stream
-
-\chapter{Details of results}
-         Details of results whose length would compromise readability of main text.
-
-\chapter{Listings}
-	Should this be the case
-
-\chapter{Tooling}
-	(Should this be the case)
-
-	Anyone using \Latex\ should consider having a look at \TUG,
-	the \tug{\TeX\ Users Group}
 	
 \end{document}
 

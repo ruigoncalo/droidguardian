@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rmgoncalo"
+    package="com.rmgoncalo.droidg"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="10"
         android:targetSdkVersion="19" />
-    
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" 
-        android:launchMode="singleTop" >
-        <activity 
-            android:name="com.rmgoncalo.BootActivity"
-            android:theme="@style/Theme.Transparent">
-            <intent-filter >
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.rmgoncalo.droidg.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-        		<category android:name="android.intent.category.LAUNCHER" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.rmgoncalo.QueryActivity" 
-            android:theme="@style/Theme.Transparent">
-        </activity>
-        <service 
-            android:name="com.rmgoncalo.Daemon">
-        </service>
-        <receiver 
-            android:name="com.rmgoncalo.BootReceiver"
-            android:exported="false">  
-   			<intent-filter>  
-        		<action android:name="com.rmgoncalo.intent.QUERY" />  
-    		</intent-filter>  
-		</receiver>
     </application>
-	
+
 </manifest>

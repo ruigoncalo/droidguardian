@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Droidguardian</string>
+    <string name="app_name">DroidGuardian</string>
     <string name="action_settings">Settings</string>
     <string name="show_dialog">Show Dialog</string>
     <string name="sock_path">Socket Path</string> 

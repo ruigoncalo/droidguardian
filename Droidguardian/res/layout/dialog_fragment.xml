@@ -5,14 +5,6 @@
     android:gravity="center_horizontal"
     android:padding="4dip"
     android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/dialogMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:text="@string/dialog_message"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
     
     <Spinner
         android:id="@+id/lifetimeSpinner"
@@ -20,23 +12,5 @@
         android:layout_height="wrap_content"
         android:entries="@array/lifetime_options"
         android:prompt="@string/forever" />
-    
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content" android:layout_height="wrap_content">
-
-      <Button android:id="@+id/buttonAllow"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/allow">
-      </Button>
-
-      <Button android:id="@+id/buttonDeny"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="@string/deny">
-      </Button>
-
-    </LinearLayout>
     
 </LinearLayout>
