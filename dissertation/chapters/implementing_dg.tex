@@ -1,4 +1,4 @@
-The previous chapters introduced fundamental concepts that allowed the development of DroidGuardian. This chapter presents their practical application in the development process. A detailed description of each component will be provided along with the general tool's architecture. The last section will present implementation decisions.
+The previous chapters introduced fundamental concepts that allowed the development of DroidGuardian. This chapter presents their practical application on the implementation process. At first, it is introduced the environment in which DroidGuardian was built concerning operating systems and tools. Follows a detailed description of each component preceded by the general architecture. The last section highlights some relevant implementation decisions.
 
 \section{Setting up the environment}
 
@@ -23,24 +23,86 @@ DroidGuardian consists of three layers presented in \autoref{fig:dg_arch}. At th
  \label{fig:dg_arch}
 \end{figure}
 
+\section{DroidGuardian Protocol}
+
+The three layers use a protocol to communicate with each other. There are two points of communication that is important to highlight: kernel module - native layer and native layer - Java layer. Both use stream sockets to exchange data. In the first case, it is used the following structure:
+
+\begin{lstlisting}[style=CInputStyle, caption=\texttt{security\_socket\_connect} hook (Linux kernel v3.11)]
+#define DG_INET 1
+#define DG_INET6 2
+#define ALLOW 1
+#define DENY 2
+#define FOREVER 1
+#define ONCE 2
+
+struct dg_query {
+  int family;
+  struct sockaddr_in addrin;
+  struct sockaddr_in addrin6;
+  int pid;
+  char process[16];
+  int permission;
+  int lifetime;
+} 
+\end{lstlisting}
+
+The \texttt{dg\_query} structure's elements are described as follows:
+\begin{itemize}
+\item \texttt{family} defines the \gls{ip} version, being \texttt{DG\_INET} related to the \gls{ip}v4 and \texttt{DG\_INET6} related to the \gls{ip}v6;
+\item \texttt{addrin} is used to store the address data in case of \texttt{family} is \texttt{DG\_INET};
+\item \texttt{addrin6} is used to store the address data in case of \texttt{family} is \texttt{DG\_INET6};
+\item \texttt{pid} gives the process ID;
+\item \texttt{process} gives the process name. It is declared an array with size 16, because it gets the name from an array that has also size 16.
+\item \texttt{permission} indicates if the connection is established or not, being \texttt{ALLOW} in the first case and \texttt{DENY} in the second.
+\item \texttt{lifetime} assigns a time tag of the rule.
+\end{itemize}
+
+The kernel module does not inspect the \texttt{lifetime} element, because it is not responsible for creating rules. It is up to the native layer to deal with the rule's logic.
 
 \section{Kernel Module}
 
-DroidGuardian takes advantage of the \gls{lsm} framework in order to deny a socket connection. Every time a process running in the system executes the \texttt{connect()} primitive, the kernel will call \texttt{sock->ops->connect()}. Within this function is placed the security hook \texttt{security\_socket\_connect()}. \autoref{lst:security_socket_connect} demonstrates how the hook function is able to deny the socket connection:
+DroidGuardian takes advantage of the \gls{lsm} framework in order to deny a socket connection. When a process running in the system executes the \texttt{connect()} primitive, the kernel will call \texttt{sock->ops->connect()}. Recalling the \gls{lsm} technical explanation provided in \autoref{chap:lsm} within this function is placed the security hook \texttt{security\_socket\_connect()}:
 
-\begin{lstlisting}[style=CInputStyle, caption=\texttt{security\_socket\_connect} hook (Linux kernel v3.11), label=lst:security_socket_connect]
+\begin{lstlisting}[caption=Code snippet of the \texttt{security\_socket\_connect} hook function(Linux kernel v3.11)]
 err =
 	 security_socket_connect(sock, (struct sockaddr *)&address, addrlen);
 if (err)
 	goto out_put;
 \end{lstlisting}
 
-If the output value is not 0, the socket will not be connected. Therefore, the kernel module sends the \texttt{address} structure, as well as the ID and name of the process who calls the \texttt{connect} primitive, and waits for a value to return. If the connection request was accepted by DroidGuardian, the hook function returns 0, otherwise returns \texttt{EPERM}, which is the macro to \textit{Operation not permitted} and has value 1.
+If the output of the hook function is different from 0, the socket will not be connected. Therefore, the kernel module sends the \texttt{address} structure, as well as the ID and name of the process who called the \texttt{connect} primitive to the Android application, and waits for a value to return. If the connection request was accepted by DroidGuardian, the hook function returns 0, otherwise returns \texttt{EPERM}, which is the macro to \textit{Operation not permitted} and has value 1.
 
-The kernel module implements a hook function called \texttt{droidguardian\_socket\_connect} responsible for send the socket data to the Android application. It fulfills this task by calling auxiliary functions that set up a stream socket client and preparing a query structure to be filled in.
+The kernel module implements the callback as \texttt{droidguardian\_socket\_connect()}, which is responsible for sending the socket data to the Android application. It fulfills this task by calling auxiliary functions that set up a stream socket client and preparing a query structure to be filled in. \autoref{fig:kernel_module_flow} presents the kernel module flow diagram.
 
-(FALTA ACABAR)
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.5]{figures/kernel_module_flow.png}
+ \caption{Process flow in the kernel module}
+ \label{fig:kernel_module_flow}
+\end{figure}
 
+The hook function receives three arguments:
+\begin{itemize}
+\item \texttt{struct socket *sock}
+\item \texttt{struct sockaddr *address}
+\item \texttt{int addrlen}
+\end{itemize}
+
+The first structure contains the data regarding the socket that is trying to connect to a server socket. The second structure contains the server address to which it intends to connect. Note that the \texttt{connect()} primitive was introduced in \autoref{sec:sockets}. Once the hook function is called, these arguments are inspected:
+
+\begin{enumerate}
+\item The socket family type is analyzed. In case it is different from \texttt{AF\_INET} or \texttt{AF\_INET}, the hook function immediately returns 0 allowing the connection. DroidGuardian is only interested in filtering internet sockets. Furthermore, DroidGuardian uses unix domain sockets. If they were intercepted as well the function would enter a dangerous loop.
+
+\item Once passed the family type check, \gls{ip} versions are distinguished: if the socket is specified as \gls{ip}v4 (\texttt{AF\_INET}) a \texttt{sockaddr\_in} structure is filled in by casting the \texttt{sockaddr} argument; otherwise the socket concerns \gls{ip}v4 (\texttt{AF\_INET6}) and a \texttt{sockaddr\_in6} structure is filled in, in the same way. These structures will store the server address data that will be sent to the application.
+
+\item Along with the server address, the process that launched the connection request needs to be identified. At kernel level, it is possible to use the \texttt{current} global variable that points to the \texttt{ task\_struct} structure provided by the \texttt{include/linux/sched.h} header file. This structure contains the data related to the running process. Using \texttt{current->pid} and \texttt{current->comm} it is possible to get the process ID and name, respectively. These data also is sent to the application.
+
+\item A new client socket (unix domain) is created to communicate with the application, and the subsequent steps to establish a stream connection are executed.
+
+\item The \texttt{sock\_sendmsg()} function is called to send the data to the application.
+
+\item At last, the \texttt{sock\_recvmsg()} function is called to get the value that will define the hook as permissive or blocker.
+\end{enumerate}
 
 \section{Native Layer}
 
@@ -119,6 +181,5 @@ It was decided that disrupt the user from whatever he is doing, with an alert po
 
 \subsubsection{Service and Activity communication}
 
-The communication between the \texttt{Daemon} and the \texttt{QueryActivity} is established through local sockets. This is the third nested socket connection that takes place since DroidGuardian intercepts an internet connection attempt in the kernel and displays it to the user.
-
+\subsubsection{}
 (FALTA ACABAR) 
