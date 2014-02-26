@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme" 
         android:launchMode="singleTop" >
         <activity 
-            android:name="com.rmgoncalo.BootActivity"
+            android:name="com.rmgoncalo.droidg.BootActivity"
             android:theme="@style/Theme.Transparent">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -22,14 +22,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.rmgoncalo.QueryActivity" 
+            android:name="com.rmgoncalo.droidg.QueryActivity" 
             android:theme="@style/Theme.Transparent">
         </activity>
         <service 
-            android:name="com.rmgoncalo.Daemon">
+            android:name="com.rmgoncalo.droidg.Daemon">
         </service>
         <receiver 
-            android:name="com.rmgoncalo.BootReceiver"
+            android:name="com.rmgoncalo.droidg.BootReceiver"
             android:exported="false">  
    			<intent-filter>  
         		<action android:name="com.rmgoncalo.intent.QUERY" />  
