@@ -95,7 +95,7 @@ The first structure contains the data regarding the socket that is trying to con
 
 \item Once passed the family type check, \gls{ip} versions are distinguished: if the socket is specified as \gls{ip}v4 (\texttt{AF\_INET}) a \texttt{sockaddr\_in} structure is filled in by casting the \texttt{sockaddr} argument; otherwise the socket concerns \gls{ip}v4 (\texttt{AF\_INET6}) and a \texttt{sockaddr\_in6} structure is filled in, in the same way. These structures will store the server address data that will be sent to the application.
 
-\item Along with the server address, the process that launched the connection request needs to be identified. At kernel level, it is possible to use the \texttt{current} global variable that points to the \texttt{ task\_struct} structure provided by the \texttt{include/linux/sched.h} header file. This structure contains the data related to the running process. Using \texttt{current->pid} and \texttt{current->comm} it is possible to get the process ID and name, respectively. These data also is sent to the application.
+\item Along with the server address, the process that launched the connection request needs to be identified. At kernel level, it is possible to use the \texttt{current} global variable that points to the \texttt{ task\_struct} structure provided by the \texttt{include/linux/sched.h} header file. This structure contains the data related to the running process. Using \texttt{current->pid} and \texttt{current->comm} it is possible to get the process ID and name, respectively. These data is also sent to the application.
 
 \item A new client socket (unix domain) is created to communicate with the application, and the subsequent steps to establish a stream connection are executed.
 
@@ -165,11 +165,12 @@ The following steps describe the process flow of the Java layer:
 \item This process is repeated every time a new connection request reaches the Java layer.
 \end{enumerate} 
 
+
 \section{Decisions}
 
 While developing DroidGuardian, various doubts and questions came out regarding the best way to implement certain features. This section presents those cases along with the decision taken and its explanation.
 
-\subsubsection{Dialog vs Notification}
+\subsection{Dialog vs Notification}
 
 The dialog window don't follow the correct rules that Android states when it comes to alert the user that some event occurred. Dialogs exist for this purpose, but in a different context. A dialog alert should be used inside an activity that the user intentionally invoked. For instance, when the user triggers an action to delete data from a certain folder it is expected that a dialog window pops up asking if he intends to delete that data. This is a consequence of the user's action.
 
@@ -179,7 +180,39 @@ Considering both elements, dialogs and notification, the DroidGuardian case fits
 
 It was decided that disrupt the user from whatever he is doing, with an alert pop up was better than keeping the kernel waiting long periods of time.
 
-\subsubsection{Service and Activity communication}
+\subsection{Service and Activity Communication}
 
-\subsubsection{}
-(FALTA ACABAR) 
+\subsection{Starting DroidGuardian on Boot}
+
+DroidGuardian is designed to start running as soon as possible in order to dispatch the kernel requests. Android allow applications to start executing after the booting process by requesting a Manifest permission defined as \texttt{android.permission.RECEIVE\_BOOT\_COMPLETED}, and by grabbing the intent, which action is \texttt{ACTION\_BOOT\_COMPLETED}.
+
+Using a receiver it is possible to grab that intent and execute a certain operation. DroidGuardian implements a BroadcastReceiver class which goal is to start the \texttt{Daemon} service:
+
+\begin{lstlisting}[caption=BroadcastReceiver responsible to start the service after the booting process]
+public class BootReceiver extends BroadcastReceiver {
+	
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Intent i = new Intent(context, Daemon.class);
+            context.startService(i);
+        }
+    }
+}
+\end{lstlisting}
+
+This receiver must be declared on the Manifest file by defining the \texttt{BOOT\_COMPLETED} intent's action that falls under the \texttt{DEFAULT} category:
+
+\begin{lstlisting}[caption=Declaring the receiver component on the Manifest file]
+ <receiver 
+    android:name="com.rmgoncalo.droidg.BootReceiver"
+    android:exported="true"
+    android:enabled="true"
+    android:permission="android.permission.RECEIVE_BOOT_COMPLETED">>
+    
+    <intent-filter >
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+        <category android:name="android.intent.category.DEFAULT" />
+    </intent-filter>
+</receiver>
+\end{lstlisting}

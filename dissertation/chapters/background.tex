@@ -140,3 +140,23 @@ corresponding to the security module, the daemon and the frontend, respectively.
 \end{itemize}
 
 Depending on the nature of the query, \textit{Query data} may store a \gls{pid} or the permission values: either \textit{yes} or \textit{no}. 
+
+\section{Related Android Apps}
+
+
+Several mechanisms have been implemented to enforce fine-grained access policies regarding network connections on Android devices. \textit{Aurasium} provides a security feature that isolates each application in a custom sandbox controlling the access to the device's data and resources. It defines a set of rules and policies that ensure the device's protection. Aurasium provides a technology that repackages each \texttt{apk} file applying an intermediate layer that intercepts certain operation calls that use value resources, as Internet, SMS messages, IMEI, contact information, etc. Each access is conditioned by a set of policies which may be defined automatically or by the user. 
+
+One of the most interesting features of this tool is the ability to enforce its policies without modifying the Android system. Aurasium places native code in the native framework layer and through 
+
+ what makes it easily and widely deployed. Regarding network access, Aurasium authors state that independently from the level a network operation is called, it will fall on the \texttt{connect()} method in the \texttt{OSNetworkSystem} Java class. This method calls the \texttt{libnativehelper.so} library that transfers control to the \texttt{connect()} method of the \texttt{libc.so} library. At last, the socket is able to get connected by libc delivering a system call to the Linux kernel. This path allows to create a check point above the Linux kernel in order to monitoring all operations called by the uppermost layers. By controlling the Bionic libc library, Aurasium is able to execute a set of policies that protect the entire Android system \cite{Aurasium}.
+
+
+Malicious applications take advantage of the Manifest permissions to grant access to resources that the user is not aware of when installing such apps. Even though these permissions are presented before the installation process, the user is not able to figure out if is granting permission to his valuable assets. In order to apply a control level between Manifest permissions and those permissions Android apps really need, it was developed an interesting mechanism called \textit{AppFence}. This tool inspects the app's Manifest permissions and allows users to decide which should be applied and those that should not, overtaking the obligation of accepting all permissions in order to install the app. In fact, all permissions are accepted, but instead of granting access to certain resources, AppFence replaces them with \textit{shadow data}, which is an inoffensive imitation of that resources. For instance, if an app requires access to the contacts list and the user do not agree, the system will provide an empty list to the app. If the application is bad intentioned regarding that list, it will cause no harm to the user.
+AppFence also protects against data leakage through outgoing connections. It performs at socket level by intercepting data buffers. When the malicious app is writing to a buffer, AppFence acts in one of two ways: tricks the app by indicating that the buffer was been sent or emulates a state in which the device has no wireless connections.
+
+
+presents an interesting work regarding network policies where the author states that Android's internet static permission provides a coarse grained permission. He claims that 
+
+
+
+

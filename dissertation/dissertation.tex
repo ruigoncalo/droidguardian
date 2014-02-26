@@ -13,14 +13,8 @@
 
 \usepackage{lipsum}
 \usepackage[linedheaders,parts,pdfspacing]{classicthesis}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage[acronym]{glossaries}
 \usepackage{dissertation}
 \usepackage[implicit=true, colorlinks=true, linkcolor=RefBlack, citecolor=RefBlack, urlcolor=RefBlack]{hyperref}
-\usepackage{amssymb}
-
-
 \usepackage{dsfont}
 \usepackage{xspace}
 \usepackage{fancyvrb}
@@ -48,7 +42,7 @@
 %%Defines
 %\def \... {..}
 
-\makeglossaries  %  either use this ...
+\makeglossaries
 
 \makeindex	% ... or this
 
@@ -56,6 +50,7 @@
 \sloppy
 
 % Add acronym definitions
+\input{glossaries}
 
 % Cover page ---------------------------------------------
 \sf
@@ -100,20 +95,18 @@
 	
 	\cleardoublepage
 	\lstlistoflistings
-	
-	% Add list of acronyms
-	\input{glossaries.tex}
-	
+
 	\cleardoublepage
 	\pagenumbering{arabic}
 	\setcounter{page}{3}
 
-\part{Introductory material}
+\part{Introduction}
 
-%--------------------------------------------------------------------------
 \chapter{Introduction}
 \label{chap:introduction}
 \input{chapters/introduction}
+
+\part{Android Concepts Overview}
 
 \chapter{Android Overview}
 \label{chap:android_overview}
@@ -123,17 +116,18 @@
 \label{chap:android_security}
 \input{chapters/security}
 
+\part{Related Work}
+
 \chapter{Related work}
 \label{chap:background}
 \input{chapters/background}
+
+\part{Technical Concepts}
 
 \chapter{Linux Security Modules}
 \label{chap:lsm}
 \input{chapters/lsm}
 
-\part{Core of the dissertation}
-
-%--------------------------------------------------------------------------
 \chapter{Technical concepts}
 \label{chap:technical_concepts}
 \input{chapters/technical_concepts}
@@ -145,6 +139,8 @@
 \chapter{Using Droidguardian}
 \label{chap:using_dg}
 \input{chapters/using_dg}
+
+\part{Conclusion}
 
 \chapter{Conclusion}
 \label{chap:conclusion}

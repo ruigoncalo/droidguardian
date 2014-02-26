@@ -1,8 +1,23 @@
-Introduction
+This document is a master dissertation that takes part of the second year of the Master Degree in Computer Engineering that is held at the University of Minho in Braga, Portugal. The work presented in this master dissertation is included in the field of Android security.
 
-\section{Motivation}
-\label{sec:motivation}
+\section{Overview}
+\label{sec:overview}
 
+Android is the most popular mobile device \gls{os}. Since the first release of an Android based mobile device in 2008 that its worldwide market share has been constantly growing reaching almost 80\% in 2013 \cite{Gartner:Android}. This popularity was gained because of the great features smartphones provide to users. They are able to accomplish an infinite amount of tasks that facilitate their daily routines. Android provides an useful set of resources, as camera, network connection, \gls{gps}, telephony, etc, and a powerful \gls{api} that allow users to develop their own programs to run in Android devices usually known as \textit{applications} or \textit{apps}.
+
+A particular asset of Android devices is the network component that connects users to the Internet and uses the same network architecture stack of personal computers. In fact, the Android \gls{os} core is based on the Linux kernel, which presents a lot of similarities with Linux based operating systems to desktop computers. The access to the Internet is undoubtedly one of the most important features nowadays, and the Android's interface makes it really simple to exchange data over it.
+
+However, high popularity also means attraction by malicious actions. Android has suffered from malicious attacks since the beginning what led to the development of security measures that have been introduced in almost every new \gls{os} version. One of the measures that was brought since the beginning of Android was the \textit{Manifest} permissions model. Whenever an user choses to install a certain application, it is prompt a list with all device's resources that the application wants to grant access to, which the user must accept in order to proceed the installation process. If he feels uncomfortable with this list, for instance, by granting a simple local game access to the Internet, he may choose not to accept the app's permissions and the installation is canceled. Once the Manifest permissions are accepted, the application will always be free to access the described resources and the user won't be asked again.
+
+The Internet permission, defined by the token \texttt{android.permission.INTERNET}, allow applications to open network sockets. If this permission is granted, the application is free to establish Internet connections to any server. Android provides no filter to control the incoming and outgoing traffic. Usually, applications use Internet to provide handy features. But, there are many cases where Internet is used to cause harm, very often without the users's knowledge. Malicious applications take advantage of the granted Internet permission to send out any data they have access to. It is up to the user to inspect the Manifest permissions and decide whether the application's purpose fits the permissions it is requiring. Most of the times, applications actually need to access network resources to beneficial goals. For instance, even a simple game may need to connect to the Internet to download advertise data. Normally, users don't prevent some application's installation because it may seem odd that they require Internet permission. Users don't know if it will be used for legitimate or illegitimate actions. Unfortunately, in case of doubt they choose to take the risk.
+
+Introducing a real case, a few weeks ago, it was going into discussion the possibility that the worldwide popular game \textit{Angry Birds} had been sending users's personal data to the \gls{nsa}. According to the rumor, the \gls{nsa} had installed backdoors on several applications, as \textit{Angry Birds}, and had been collected huge amounts of private data \cite{AngryBirds}.
+
+This case presents a huge evidence that the Android platform lacks security measures. In order to bring some control to users regarding network connections, it was purposed the development of a mechanism able to detect all outgoing traffic. Such technology would notice every connection applications request to the outside world, preventing the access to remote servers without the user consent. Along with the connection requests detection, the mechanism should also be able to deny such requests in real time. If the user does not feel comfortable that a certain application gets connected to a certain address, he should be able to deny the connection.
+
+This document introduces the development of the aforementioned technology. It aims to provide Android users the ability to be noticed whenever a new outgoing Internet connection request is launched by an installed application along with its acceptance or rejection in real time. This mechanism is called \textit{DroidGuardian}.
+
+In practical terms, \textit{DroidGuardian} provides a fine-grained control over outgoing Internet connections behaving as a firewall.
 
 
 %\begin{itemize}
@@ -12,11 +27,30 @@ Introduction
 %\item Explain why is important to invest in Android OS security.
 %\end{itemize}
 
-\section{Objectives}
-\label{sec:objectives}
+\section{Goals to Achieve}
+\label{sec:goals}
 
-%Define objectives and a brief explanation on how they will be accomplished.
+The purposed mechanism should fulfill the following requirements:
 
-\section{Structure}
+\begin{itemize}
+\item Intercept all outgoing internet connections requests;
+\item Provide a \gls{gui} to inform the user regarding such requests;
+\item Implement a rules-based mechanism to filter connection alerts;
+\end{itemize}
 
-%Structure of the dissertation.
+Once the mechanism is running on Android devices, it should be measured its overhead in order to provide enhacements
+
+\section{Outline}
+\label{sec:outline}
+
+This section gives a brief description of all chapters presented on this dissertation.
+
+In \autoref{chap:android_overview}, it is introduced a general overview of the Android platform. Since this document describes a project that involves the development of an Android application, it is very important to provide several basic notions regarding the Android platform architecture, as well as its fundamental components. Throughout the dissertation there are various references to the Android platform layers, which this chapter presents with a proper level of detail. The Android components explain how an Android application should be implemented, and they are mentioned on the DroidGuardian's development discussion.
+
+In \autoref{chap:security}, it is given a brief approach over the main Android security mechanisms. In order to understand how DroidGuardian fits the needs in the Android security model, it is necessary to understand how this model is designed.
+
+In \autoref{chap:background}, it is presented the most relevant related work. The technology this document introduces was inspired by two tools, which were not designed for Android. This section introduces a detailed subject concerning these tools. In the Android field, there are very interesting projects related to fine-grained access control over Internet connections.
+
+In \autoref{chap:lsm}, there is introduced a detailed description regarding the mechanism used to interact with Internet sockets. The chapter gives an introduction about the subject, followed by technical aspects that comprise the \gls{lsm} framework.
+
+In \autoref{chap:technical_concepts}, it is introduced general technical concepts that played an important role in the scope of this project. Along with the development of DroidGuardian, it was necessary to 
