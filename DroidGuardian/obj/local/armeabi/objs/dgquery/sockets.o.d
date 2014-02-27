@@ -68,7 +68,9 @@
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/asm-generic/siginfo.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/sysconf.h \
  /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/capability.h \
- /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/pathconf.h
+ /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/pathconf.h \
+ /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/stat.h \
+ /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/stat.h
 
 /Users/rmgoncalo/Dropbox/Tese/droidguardian/DroidGuardian/jni/com_rmgoncalo_droidg_LoadLibrary.h:
 
@@ -207,3 +209,7 @@
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/capability.h:
 
 /Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/pathconf.h:
+
+/Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/sys/stat.h:
+
+/Users/rmgoncalo/Projects/android-ndk-r9b/platforms/android-19/arch-arm/usr/include/linux/stat.h:

@@ -13,11 +13,10 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stddef.h>
+#include <sys/stat.h>
 
 // Max log message length
 #define MAX_LOG_MESSAGE_LENGTH 256
-#define DG_INET 1
-#define DG_INET6 2
 
 #define  LOG_TAG    "DG-Native"
 
@@ -29,9 +28,10 @@
 
 #define PORT_SIZE 2
 #define INT_SIZE 4
-#define PROCESS_SIZE 16 // size of current->comm
+#define PROCESS_SIZE 4096
 
-
+#define DG_INET 1
+#define DG_INET6 2
 // struct used to communicate with kernel
 struct dg_query{
 	int family;
@@ -364,6 +364,35 @@ static ssize_t SendToSocket(
 	return sentSize;
 }
 
+int get_proc_name_from_pid(int pid, char proc[])
+{
+	FILE *file;
+	int err, i;
+
+	char tmp[10];
+	char path[PROCESS_SIZE]="/proc/";
+
+	sprintf(tmp, "%d", pid);
+	strcat(path, tmp);
+	strcat(path, "/cmdline");
+
+	if ((file = fopen(path, "r")) == NULL)
+	{
+		LOGE("Error opening proc/pid/cmdline.");
+		return -1;
+	}
+
+	if ( fgets(proc ,PROCESS_SIZE ,file) == NULL )
+	{
+		LOGE("Error getting cmdline");
+		return -1;
+	}
+
+	fclose(file);
+
+	return 0;
+}
+
 /**
  * Send query to java and gets answer
  *
@@ -378,15 +407,14 @@ static int query4_to_java(
 		JNIEnv* env,
 		jobject obj,
 		struct sockaddr_in addrin,
-		int pid,
-		char process[])
+		int pid)
 {
 	int sendm, recvm, result = -1;
 	char *recvs;
 	char msg[INET_ADDRSTRLEN + PORT_SIZE + INT_SIZE + PROCESS_SIZE];
 	char sport[PORT_SIZE];
 	char spid[INT_SIZE];
-
+	char process[PROCESS_SIZE];
 	char ip[INET_ADDRSTRLEN];
 	unsigned short port;
 
@@ -398,6 +426,11 @@ static int query4_to_java(
 	sprintf(sport, "%hu", port);
 
 	sprintf(spid, "%d", pid);
+
+	if(get_proc_name_from_pid(pid, process) == -1)
+	{
+		strcpy(process, "Unknown App");
+	}
 
 	int clientSocket = NewLocalSocket(env, obj);
 	if (NULL == (*env)->ExceptionOccurred(env))
@@ -439,15 +472,14 @@ static int query6_to_java(
 		JNIEnv* env,
 		jobject obj,
 		struct sockaddr_in6 addrin6,
-		int pid,
-		char process[])
+		int pid)
 {
 	int sendm, recvm, result = -1;
 	char *recvs;
 	char msg[INET6_ADDRSTRLEN + PORT_SIZE + INT_SIZE + PROCESS_SIZE];
 	char sport[PORT_SIZE];
 	char spid[INT_SIZE];
-
+	char process[PROCESS_SIZE];
 	char ip6[INET6_ADDRSTRLEN];
 	unsigned short port;
 
@@ -459,6 +491,11 @@ static int query6_to_java(
 	sprintf(sport, "%hu", port);
 
 	sprintf(spid, "%d", pid);
+
+	if(get_proc_name_from_pid(pid, process) == -1)
+	{
+			strcpy(process, "Unknown App");
+	}
 
 	int clientSocket = NewLocalSocket(env, obj);
 	if (NULL == (*env)->ExceptionOccurred(env))
@@ -499,6 +536,7 @@ void Java_com_rmgoncalo_droidg_LoadLibrary_startDaemon(
 {
 	struct dg_query* query;
 	int result = 0;
+	int mode;
 
 	query = (struct dg_query *) malloc(sizeof(struct dg_query));
 	size_t query_size = sizeof(struct dg_query);
@@ -517,12 +555,21 @@ void Java_com_rmgoncalo_droidg_LoadLibrary_startDaemon(
 		if (NULL != (*env)->ExceptionOccurred(env))
 			goto exit;
 
+		//Change socket permissions
+		mode = chmod(SOCK_PATH, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+		if(mode == -1)
+		{
+			LOGE("Error chmod.");
+			goto exit;
+		}
+
 		// Listen on socket with a backlog of 1024 pending connections
 		ListenOnSocket(env, obj, serverSocket, 1024);
 		if (NULL != (*env)->ExceptionOccurred(env))
 			goto exit;
 
-		while (1) {
+		while (1)
+		{
 
 			// Accept a client connection on socket
 			int clientSocket = AcceptOnLocalSocket(env, obj, serverSocket);
@@ -539,13 +586,13 @@ void Java_com_rmgoncalo_droidg_LoadLibrary_startDaemon(
 			{
 				if(query->family == DG_INET)
 				{
-					result = query4_to_java(env, obj, query->addrin, query->pid, query->process);
+					result = query4_to_java(env, obj, query->addrin, query->pid);
 				}
 				else
 				{
 					if(query->family == DG_INET6)
 					{
-						result = query6_to_java(env, obj, query->addrin6, query->pid, query->process);
+						result = query6_to_java(env, obj, query->addrin6, query->pid);
 					}
 					else
 					{
