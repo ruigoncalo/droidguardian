@@ -11,11 +11,12 @@ public class BootReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent){
-		
-		if(intent.getAction().equals("com.rmgoncalo.intent.QUERY")){    
-			Intent startServiceIntent = new Intent(context, Daemon.class);
-			context.startService(startServiceIntent);
-			Log.v(tag, "Service started from boot");
-		}
+	
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Intent startService = new Intent(context, Daemon.class);
+            context.startService(startService);
+            Log.v(tag, "Service started from boot");
+        }
 	}
+
 }

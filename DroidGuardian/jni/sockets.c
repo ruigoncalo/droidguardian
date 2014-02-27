@@ -24,7 +24,7 @@
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-#define SOCK_PATH "/data/data/com.rmgoncalo/dg_daemon_server"
+#define SOCK_PATH "/data/data/com.rmgoncalo.droidg/dg_daemon_server"
 #define SOCKJAVA_PATH "/abstract/usocket"
 
 #define PORT_SIZE 2

@@ -1,16 +1,15 @@
 package com.rmgoncalo.droidg;
 
-//import android.graphics.drawable.ColorDrawable;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class DialogWindow extends DialogFragment {
@@ -37,27 +36,20 @@ public class DialogWindow extends DialogFragment {
 		this.lifetime = s;
 	}
 	
-	@Override
-	public void onCreate(Bundle b){
-		super.onCreate(b);
-		this.setCancelable(true);
-		int style = DialogFragment.STYLE_NORMAL;
-		int theme = 0;
-		setStyle(style, theme);
-	}
 	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle){
-		View v = inflater.inflate(R.layout.dialog_fragment, container, false);
-		//getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0));
+	public Dialog onCreateDialog(Bundle i){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		View v = inflater.inflate(R.layout.dialog_fragment, null);
 		
 		String processName = getArguments().getString("process");
 		String pid = getArguments().getString("pid");
 		String address = getArguments().getString("address");
 		String port = getArguments().getString("port");
-		
-		TextView dialogMessage = (TextView) v.findViewById(R.id.dialogMessage);
-		dialogMessage.setText("Process " + processName + " ("+ pid + ") wants to connect to server " + 
-							address + " on port " + port + ".");
+		String message = "Process " + processName + 
+						 " ("+ pid + ") wants to connect to address " + 
+						 address + " on port " + port + ".";
 		
 		spinner = (Spinner) v.findViewById(R.id.lifetimeSpinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -78,28 +70,34 @@ public class DialogWindow extends DialogFragment {
 		    }
 		});
 		
-		Button btnAllow = (Button) v.findViewById(R.id.buttonAllow);
-		btnAllow.setOnClickListener(new View.OnClickListener() {
+		builder.setView(v).
+		setIcon(R.drawable.ic_launcher).
+		setTitle(R.string.app_name).
+		setMessage(message).
+		setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
+			
 			@Override
-			public void onClick(View v) {
+			public void onClick(DialogInterface dialog, int which) {
 				OnDialogDoneListener act = (OnDialogDoneListener)getActivity();
 				act.onDialogDone("Allow", getLifetime());
 				dismiss();
 				return;
+				
 			}
-		});
-		
-		Button btnDeny = (Button) v.findViewById(R.id.buttonDeny);
-		btnDeny.setOnClickListener(new View.OnClickListener() {
+		}).
+		setNegativeButton(R.string.deny, new DialogInterface.OnClickListener() {
+			
 			@Override
-			public void onClick(View v) {
+			public void onClick(DialogInterface dialog, int which) {
 				OnDialogDoneListener act = (OnDialogDoneListener)getActivity();
 				act.onDialogDone("Deny", getLifetime());
 				dismiss();
 				return;
+				
 			}
 		});
 		
-		return v;
+		return builder.create();
+		
 	}
 }

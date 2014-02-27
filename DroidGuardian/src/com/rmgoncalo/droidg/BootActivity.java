@@ -11,9 +11,8 @@ public class BootActivity extends Activity {
 	public void onCreate(Bundle b){
 		super.onCreate(b);
 		
-		Intent intent = new Intent();
-		intent.setAction("com.rmgoncalo.intent.QUERY");
-		sendBroadcast(intent);
+		Intent intent = new Intent(this, Daemon.class);
+		startService(intent);
 		
 		Toast.makeText(getApplicationContext(), "Starting DroidGuardian...", Toast.LENGTH_SHORT).show();
 		finish();

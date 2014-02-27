@@ -6,6 +6,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
+    
+     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -28,13 +30,17 @@
         <service 
             android:name="com.rmgoncalo.droidg.Daemon">
         </service>
-        <receiver 
+		 <receiver 
             android:name="com.rmgoncalo.droidg.BootReceiver"
-            android:exported="false">  
-   			<intent-filter>  
-        		<action android:name="com.rmgoncalo.intent.QUERY" />  
-    		</intent-filter>  
-		</receiver>
+            android:exported="true"
+            android:enabled="true"
+            android:label="BootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">>
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 
