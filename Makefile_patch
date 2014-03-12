@@ -1,0 +1,4 @@
+8d7
+< subdir-$(CONFIG_SECURITY_DROIDG)	+= droidg
+19d17
+< obj-$(CONFIG_SECURITY_DROIDG)		+= droidg/built-in.o
