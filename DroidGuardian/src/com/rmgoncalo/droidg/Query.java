@@ -75,8 +75,7 @@ public class Query {
 		setAddress(result[0]);
 		setPort(result[1]);
 		setPid(result[2]);
-		setProcessName(result[3]);
-		
+		setProcessName(result[3]);	
 	}
 
 }

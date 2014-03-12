@@ -8,25 +8,31 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
-import android.net.LocalSocketAddress;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Daemon extends Service {
 	
-	private static final String tag = "Daemon";
+	private static final String tag = "DG-Daemon";
 	public static String socketAddress = "/abstract/usocket";
 	public static String internalSocket = "/abstract/internal";
 	
 	private ClientTask clientTask;
 	private ServerTask serverTask;
-	private LoadLibrary lb;
+	private String appOnDialog;
+	
+	static {
+		System.loadLibrary("dgquery");
+	}
+	
+	public native void startDaemon() throws Exception;
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		lb = new LoadLibrary();
+		Toast.makeText(getApplicationContext(), "Starting DroidGuardian...", Toast.LENGTH_SHORT).show();
 		
 		serverTask = new ServerTask();
 		serverTask.start();
@@ -44,7 +50,7 @@ public class Daemon extends Service {
 	
 	@Override
 	public void onDestroy(){
-		Log.v(tag, "in onDestroy().");
+		Log.d(tag, "in onDestroy().");
 		serverTask.interrupt();
 		clientTask.interrupt();
 		
@@ -59,6 +65,7 @@ public class Daemon extends Service {
 	/*
 	 * Internal Socket
 	 */
+	@SuppressWarnings("resource")
 	private String getResponseFromDialog() throws Exception {
 		
 		String result = null;
@@ -66,32 +73,26 @@ public class Daemon extends Service {
 	    byte[] bufferRead =  new byte[bufferReadSize];
 	    
 		LocalServerSocket server = null;
-		LocalSocket receiver = new LocalSocket();
+		LocalSocket receiver = null;
 		InputStream input;
 		
 		try{
 			server = new LocalServerSocket(internalSocket);
-			Log.v(tag, "InternalSocket: localServerSocket");
-		} catch(IOException e){
-			e.printStackTrace();
-		}
+			Log.d(tag, "InternalSocket: localServerSocket");
 		
-		try{
+			receiver = new LocalSocket();
 			receiver = server.accept();
-			Log.v(tag, "InternalSocket: receiver accepted");
-		} catch (IOException e){
-			e.printStackTrace();
-		}
+			Log.d(tag, "InternalSocket: receiver accepted");
 		
-		try{
 			input = receiver.getInputStream();
 			
 			int bytesRead = input.read(bufferRead);
-			Log.v(tag, "bytesRead: " + bytesRead);
+			Log.d(tag, "bytesRead: " + bytesRead);
 
 			result = new String(bufferRead, "UTF-8");
 			
 			input.close();
+			
 			receiver.close();
 			server.close();
 		} catch (IOException e){
@@ -99,6 +100,83 @@ public class Daemon extends Service {
 		}
 		
 		return result;		
+	}
+	
+	/*
+	 * launchActivity
+	 */
+	private void launchActivity
+			(String address, String port, String pid, String processName){
+		
+		Intent intent = new Intent(getBaseContext(), QueryActivity.class);
+		intent.putExtra("address", address);
+		intent.putExtra("port", port);
+		intent.putExtra("pid", pid);
+		intent.putExtra("processName", processName);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		getApplication().startActivity(intent);
+	}
+	
+	/*
+	 * processQuery
+	 */
+	private String processQuery(String message){
+		
+		String result = null;
+		boolean updated_permission = false;
+		String processName = null;
+		String address = null;
+		String port = null;
+		String pid = null;
+		String permission = null;
+		
+		Query query = new Query(message);
+		processName = query.getProcessName();
+		address = query.getAddress();
+		port = query.getPort();
+		pid = query.getPid();
+		
+		if(processName.equals(appOnDialog))
+		{
+			Log.d(tag, "Application " +  processName + 
+						" is on dialog (" + appOnDialog + ")") ;
+			
+			while(!updated_permission)
+			{
+				permission =  RulesList.getPermission(processName);
+				Log.d(tag, "permission is : " + permission);
+				if(!permission.equals(Protocol.UNDEFINED))
+					updated_permission = true;
+			}
+			updated_permission = false;
+			return permission;
+		}
+		else
+		{
+			Log.d(tag, "Application " + processName + " is not on dialog.");
+		}
+		
+        if(RulesList.isNewQuery(processName))
+        {
+        	appOnDialog = processName;
+        	launchActivity(address, port, pid, processName);
+        	try
+        	{
+        		//result = "-1" or "1" or "2" or "3" or "4"
+        		result= getResponseFromDialog();
+        	}
+        	catch (Exception e)
+        	{
+        		e.printStackTrace();
+        	}
+        	appOnDialog = null;
+        }
+        else
+        {	
+        	result = RulesList.getPermission(processName);
+        }
+        
+		return result;
 	}
 	
 	/*
@@ -122,46 +200,45 @@ public class Daemon extends Service {
 	    }
 	    
 		try{
-			LocalSocketAddress localSocketAddress = server.getLocalSocketAddress();
-			Log.v(tag, "localSocketAddress:" + localSocketAddress.getName());
+			//LocalSocketAddress localSocketAddress = 
+			//						server.getLocalSocketAddress();
+			//Log.d(tag, "localSocketAddress:" + localSocketAddress.getName());
 			
-			while(true) {
-				if (server == null){
-                    Log.v(tag, "The localSocketServer is null.");
+			while(true)
+			{
+				if (server == null)
+				{
+                    Log.d(tag, "The localSocketServer is null.");
                     break;
                 }
 				
 				receiver = server.accept();
-				Log.v(tag, "localSocketServer accepted.");
 				
 				input = receiver.getInputStream();
 				output = receiver.getOutputStream();
 				
-				
-					bytesRead = input.read(bufferRead);
+				bytesRead = input.read(bufferRead);
 					
-					if (bytesRead >= 0) {
-                        Log.d(tag, "Receive data from socket, bytesRead = " + bytesRead);
-                        
-                        byte[] aux = new byte[bytesRead];
-                        for(int i = 0; i < bytesRead; i ++){
-                        	aux[i] = bufferRead[i];
-                        	bufferRead[i] = '\0';
-                        }
-                        
-                        String str = new String(aux);
-                        
-                        Log.d(tag, "The msg is : " + str);
-                        
-                        launchActivity(str);
-                        
-                        String sendtoKernel = getResponseFromDialog(); 
-                        Log.v(tag, "sendtoKernel: " + sendtoKernel);
-                        
-                        output.write(sendtoKernel.getBytes());
-                        
-                        bytesRead = 0;
+				if (bytesRead >= 0)
+				{
+					byte[] aux = new byte[bytesRead];
+                    for(int i = 0; i < bytesRead; i ++)
+                    {
+                    	aux[i] = bufferRead[i];
+                        bufferRead[i] = '\0';
                     }
+                        
+                    String str = new String(aux);
+                    Log.d(tag, "The msg is : " + str);
+                        
+                    String sendtoKernel = processQuery(str);
+                    
+                    Log.d(tag, "sendtoKernel: " + sendtoKernel);
+                        
+                    output.write(sendtoKernel.getBytes());
+                        
+                    bytesRead = 0;
+                }
 					
 				input.close();
 				output.close();	
@@ -170,18 +247,13 @@ public class Daemon extends Service {
 			receiver.close();
 			server.close();
 		}
-		catch (IOException e){
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	private void launchActivity(String msg){
-		Intent intent = new Intent(getBaseContext(), QueryActivity.class);
-		intent.putExtra("query", msg);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		getApplication().startActivity(intent);
-		Log.v(tag, "launchActivity:" + msg);
-	}
+	
 	
 	/*
 	 * Server task
@@ -206,7 +278,7 @@ public class Daemon extends Service {
 		}
 		
 		private void onBackground(){
-			Log.v(tag, "ServerTask:" + Util.getThreadSignature());
+			Log.d(tag, "ServerTask:" + Util.getThreadSignature());
 			
 			try {
 				startLocalServer();
@@ -227,10 +299,10 @@ public class Daemon extends Service {
 	private class ClientTask extends Thread {	
 			
 			public void run() {
-				Log.v(tag, "ClientTask:" + Util.getThreadSignature());
+				Log.d(tag, "ClientTask:" + Util.getThreadSignature());
 				
 				try {
-					lb.startDaemon();
+					startDaemon();
 				} catch(Exception e) {
 					e.printStackTrace();
 				}

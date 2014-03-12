@@ -1,6 +1,7 @@
 <resources>
 
-    <string name="app_name">DroidG</string>
+    <string name="app_name">Guardian</string>
+    <string name="app_name_full">DroidGuardian</string>
     <string name="action_settings">Settings</string>
     <string name="show_dialog">Show Dialog</string>
     <string name="sock_path">Socket Path</string> 

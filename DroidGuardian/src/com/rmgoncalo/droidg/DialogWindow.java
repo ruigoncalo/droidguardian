@@ -17,13 +17,15 @@ public class DialogWindow extends DialogFragment {
 	private Spinner spinner;
 	private String lifetime;
 
-	public static DialogWindow newInstance(String address, String port, String pid, String process){
+	public static DialogWindow newInstance
+	(String address, String port, String pid, String processName){
+		
 		DialogWindow dw = new DialogWindow();
 		Bundle b = new Bundle();
 		b.putString("address", address);
 		b.putString("port", port);
 		b.putString("pid", pid);
-		b.putString("process", process);
+		b.putString("process", processName);
 		dw.setArguments(b);
 		return dw;
 	}
@@ -62,24 +64,29 @@ public class DialogWindow extends DialogFragment {
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-		        setLifetime(parent.getItemAtPosition(pos).toString());
+		        
+				if(parent.getItemAtPosition(pos).toString().equals("Forever"))
+					setLifetime(Protocol.FOREVER);
+				else
+					setLifetime(Protocol.ONCE);
 		    }
 
 		    public void onNothingSelected(AdapterView<?> parent) {
-		        setLifetime("Forever");
+		        setLifetime(Protocol.FOREVER);
 		    }
 		});
 		
 		builder.setView(v).
 		setIcon(R.drawable.ic_launcher).
-		setTitle(R.string.app_name).
+		setTitle(R.string.app_name_full).
 		setMessage(message).
+		setCancelable(false).
 		setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				OnDialogDoneListener act = (OnDialogDoneListener)getActivity();
-				act.onDialogDone("Allow", getLifetime());
+				act.onDialogDone(Protocol.ALLOW, getLifetime());
 				dismiss();
 				return;
 				
@@ -90,7 +97,7 @@ public class DialogWindow extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				OnDialogDoneListener act = (OnDialogDoneListener)getActivity();
-				act.onDialogDone("Deny", getLifetime());
+				act.onDialogDone(Protocol.DENY, getLifetime());
 				dismiss();
 				return;
 				
