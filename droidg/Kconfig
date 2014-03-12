@@ -1,0 +1,5 @@
+config SECURITY_DROIDG
+	bool "DroidGuardian"
+	default n
+	help
+	  DroidGuardian Module. Intercepts outgoing Internet traffic.

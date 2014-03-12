@@ -1,0 +1,1 @@
+cmd_security/droidg/droidg.o := /home/rmgoncalo/android_folder/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-ld -EL    -r -o security/droidg/droidg.o security/droidg/droidg_defs.o security/droidg/droidg_lsm.o 
