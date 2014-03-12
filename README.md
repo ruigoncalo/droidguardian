@@ -17,7 +17,7 @@ Tested on Android emulator:
 
 Files:
  - DroidGuardian: Eclipse project files of the DroidGuardian app
- - droidg: custom Linux Kernel Module files (should be placed inside the /security)
- - Kconfig_patch: patch to security/Kconfig file
- - Makefile_patch: patch to security/Makefile file
- -zImage: Android image already compiled
+ - droidg: custom Linux Kernel Module files (should be placed inside the /security folder)
+ - Kconfig: patch to the file /security/Kconfig
+ - Makefile: patch to the file /security/Makefile
+ - zImage: Android kernel image already compiled (start emulator with "-kernel zImage")
