@@ -1,7 +1,7 @@
 package com.rmgoncalo.droidg;
 
 public class Rule {
-	
+
 	public static final String tag = "DG-Rule";
 
 	private String address;
@@ -10,8 +10,8 @@ public class Rule {
 	private String processName;
 	private String permission;
 	private String lifetime;
-	
-	public Rule(){
+
+	public Rule() {
 		this.address = null;
 		this.port = null;
 		this.pid = null;
@@ -19,8 +19,8 @@ public class Rule {
 		this.permission = null;
 		this.lifetime = null;
 	}
-	
-	public Rule(String address, String port, String pid, String processName){
+
+	public Rule(String address, String port, String pid, String processName) {
 		this.address = address;
 		this.port = port;
 		this.pid = pid;
@@ -28,8 +28,8 @@ public class Rule {
 		this.permission = null;
 		this.lifetime = null;
 	}
-	
-	public Rule(String address, String port, String pid, String processName, 
+
+	public Rule(String address, String port, String pid, String processName,
 			String permission, String lifetime) {
 		this.address = address;
 		this.port = port;

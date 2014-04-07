@@ -1,7 +1,7 @@
 package com.rmgoncalo.droidg;
 
 public class Query {
-	
+
 	public static final String tag = "Query";
 
 	private String address;
@@ -9,17 +9,17 @@ public class Query {
 	private String pid;
 	private String processName;
 	private String permission;
-	private String lifetime;	
-	
-	public Query(String msg){
+	private String lifetime;
+
+	public Query(String msg) {
 		this.setAddress(new String());
 		this.setPort(new String());
 		this.setPid(new String());
 		this.setProcessName(new String());
-		
+
 		this.handleString(msg);
 	}
-	
+
 	public String getAddress() {
 		return address;
 	}
@@ -68,14 +68,14 @@ public class Query {
 		this.lifetime = lifetime;
 	}
 
-	private void handleString(String msg){
-		
+	private void handleString(String msg) {
+
 		String[] result = msg.split(";");
-		
+
 		setAddress(result[0]);
 		setPort(result[1]);
 		setPid(result[2]);
-		setProcessName(result[3]);	
+		setProcessName(result[3]);
 	}
 
 }
