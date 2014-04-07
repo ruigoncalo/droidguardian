@@ -26,20 +26,16 @@ struct timespec inner_rStart, inner_rEnd;
  * @param message exception message.
  */
 
-static void ThrowException(
-		JNIEnv* env,
-		const char* className,
-		const char* message)
-{
+static void ThrowException(JNIEnv* env, const char* className,
+		const char* message) {
 	// Get the exception class
 	jclass clazz = (*env)->FindClass(env, className);
 
 	// If exception class is found
-	if (NULL != clazz)
-	{
+	if (NULL != clazz) {
 		// Throw exception
 		(*env)->ThrowNew(env, clazz, message);
-		LOGD("Exception thrown: %s",message);
+		LOGD("Exception thrown: %s", message);
 
 		// Release local class reference
 		(*env)->DeleteLocalRef(env, clazz);
@@ -54,23 +50,17 @@ static void ThrowException(
  * @param className class name.
  * @param errnum error number.
  */
-static void ThrowErrnoException(
-		JNIEnv* env,
-		const char* className,
-		int errnum)
-{
+static void ThrowErrnoException(JNIEnv* env, const char* className, int errnum) {
 	char buffer[MAX_LOG_MESSAGE_LENGTH];
 
 	// Get message for the error number
-	if (-1 == strerror_r(errnum, buffer, MAX_LOG_MESSAGE_LENGTH))
-	{
+	if (-1 == strerror_r(errnum, buffer, MAX_LOG_MESSAGE_LENGTH)) {
 		strerror_r(errno, buffer, MAX_LOG_MESSAGE_LENGTH);
 	}
 
 	// Throw exception
 	ThrowException(env, className, buffer);
 }
-
 
 /**
  * Constructs a new Local UNIX socket.
@@ -80,8 +70,7 @@ static void ThrowErrnoException(
  * @return socket descriptor.
  * @throws IOException
  */
-static int NewLocalSocket(JNIEnv* env, jobject obj)
-{
+static int NewLocalSocket(JNIEnv* env, jobject obj) {
 	// Construct socket
 	//LogMessage(env, obj, "Constructing a new Local UNIX socket...");
 
@@ -89,8 +78,7 @@ static int NewLocalSocket(JNIEnv* env, jobject obj)
 	LOGD("New local socket");
 
 	// Check if socket is properly constructed
-	if (-1 == localSocket)
-	{
+	if (-1 == localSocket) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 		LOGE("New local socket error");
@@ -107,8 +95,7 @@ static int NewLocalSocket(JNIEnv* env, jobject obj)
  * @param socket descriptor.
  * @throws IOException
  */
-static void ConnectToSocket(JNIEnv* env, jobject obj, int sd)
-{
+static void ConnectToSocket(JNIEnv* env, jobject obj, int sd) {
 	struct sockaddr_un address;
 	socklen_t len;
 
@@ -117,15 +104,14 @@ static void ConnectToSocket(JNIEnv* env, jobject obj, int sd)
 
 	// first char must be have 0 bytes - abstract namespace
 	address.sun_path[0] = '\0';
-	strcpy(&address.sun_path[1], SOCKJAVA_PATH );
+	strcpy(&address.sun_path[1], SOCKJAVA_PATH);
 	len = offsetof(struct sockaddr_un, sun_path) + 1 + strlen(&address.sun_path[1]);
 
 	// Unlink if the socket name is already binded
 	unlink(address.sun_path);
 
 	// Connect to address
-	if (-1 == connect(sd, (struct sockaddr*) &address, len))
-	{
+	if (-1 == connect(sd, (struct sockaddr*) &address, len)) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 	}
@@ -140,43 +126,37 @@ static void ConnectToSocket(JNIEnv* env, jobject obj, int sd)
  * @param name socket name.
  * @throws IOException
  */
-static void BindLocalSocket(
-		JNIEnv* env,
-		jobject obj,
-		int sd)
-{
+static void BindLocalSocket(JNIEnv* env, jobject obj, int sd) {
 	struct sockaddr_un address;
 
-		// Clear the address bytes
-		memset(&address, 0, sizeof(address));
-		address.sun_family = AF_UNIX;
+	// Clear the address bytes
+	memset(&address, 0, sizeof(address));
+	address.sun_family = AF_UNIX;
 
-		// Socket path
-		char* sunPath = address.sun_path;
+	// Socket path
+	char* sunPath = address.sun_path;
 
-		// Append the local name
-		strcpy(sunPath, SOCK_PATH);
+	// Append the local name
+	strcpy(sunPath, SOCK_PATH);
 
-		// Address length
-		socklen_t addressLength = sizeof(address);
+	// Address length
+	socklen_t addressLength = sizeof(address);
 
-		// Unlink if the socket name is already binded
-		unlink(address.sun_path);
+	// Unlink if the socket name is already binded
+	unlink(address.sun_path);
 
-		// Bind socket
-		//LogMessage(env, obj, "Binding to local name %s.",
-		//		SOCK_PATH);
+	// Bind socket
+	//LogMessage(env, obj, "Binding to local name %s.",
+	//		SOCK_PATH);
 
-		if (-1 == bind(sd, (struct sockaddr*) &address, addressLength))
-		{
-			// Throw an exception with error number
-			ThrowErrnoException(env, "java/io/IOException", errno);
-			LOGE("Bind local socket error");
-		}
+	if (-1 == bind(sd, (struct sockaddr*) &address, addressLength)) {
+		// Throw an exception with error number
+		ThrowErrnoException(env, "java/io/IOException", errno);
+		LOGE("Bind local socket error");
+	}
 
-		LOGD("Socket bind");
+	LOGD("Socket bind");
 }
-
 
 /**
  * Listens on given socket with the given backlog for
@@ -189,19 +169,13 @@ static void BindLocalSocket(
  * @param backlog backlog size.
  * @throws IOException
  */
-static void ListenOnSocket(
-		JNIEnv* env,
-		jobject obj,
-		int sd,
-		int backlog)
-{
+static void ListenOnSocket(JNIEnv* env, jobject obj, int sd, int backlog) {
 	// Listen on socket with the given backlog
 	//LogMessage(env, obj,
 	//		"Listening on socket with a backlog of %d pending connections.",
 	//		backlog);
 
-	if (-1 == listen(sd, backlog))
-	{
+	if (-1 == listen(sd, backlog)) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 		LOGE("Socket listen error");
@@ -220,11 +194,7 @@ static void ListenOnSocket(
  * @return client socket.
  * @throws IOException
  */
-static int AcceptOnLocalSocket(
-		JNIEnv* env,
-		jobject obj,
-		int sd)
-{
+static int AcceptOnLocalSocket(JNIEnv* env, jobject obj, int sd) {
 	// Blocks and waits for an incoming client connection
 	// and accepts it
 	//LogMessage(env, obj, "Waiting for a client connection...");
@@ -232,8 +202,7 @@ static int AcceptOnLocalSocket(
 	int clientSocket = accept(sd, NULL, NULL);
 
 	// If client socket is not valid
-	if (-1 == clientSocket)
-	{
+	if (-1 == clientSocket) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 		LOGE("Accept socket error");
@@ -254,35 +223,24 @@ static int AcceptOnLocalSocket(
  * @return receive size.
  * @throws IOException
  */
-static ssize_t ReceiveFromSocket(
-		JNIEnv* env,
-		jobject obj,
-		int sd,
-		struct dg_query* query,
-		size_t query_size)
-{
+static ssize_t ReceiveFromSocket(JNIEnv* env, jobject obj, int sd,
+		struct dg_query* query, size_t query_size) {
 	// Block and receive data from the socket into the buffer
 	//LogMessage(env, obj, "Receiving from the socket...");
 
 	ssize_t recvSize = read(sd, query, query_size);
 
 	// If receive is failed
-	if (-1 == recvSize)
-	{
+	if (-1 == recvSize) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 		LOGE("Receive size error");
-	}
-	else
-	{
+	} else {
 		// If data is received
-		if (recvSize > 0)
-		{
-			LOGD("Received %d bytes", (int) recvSize);
+		if (recvSize > 0) {
+			LOGD("Received %d bytes", (int ) recvSize);
 			//LogMessage(env, obj, "Received %d bytes.", recvSize);
-		}
-		else
-		{
+		} else {
 			LOGD("Receive: client disconnected");
 			//LogMessage(env, obj, "Client disconnected.");
 		}
@@ -302,34 +260,23 @@ static ssize_t ReceiveFromSocket(
  * @return sent size.
  * @throws IOException
  */
-static ssize_t SendToSocket(
-		JNIEnv* env,
-		jobject obj,
-		int sd,
-		struct dg_query* query,
-		size_t dg_query)
-{
+static ssize_t SendToSocket(JNIEnv* env, jobject obj, int sd,
+		struct dg_query* query, size_t dg_query) {
 
 	// Send data buffer to the socket
 	//LogMessage(env, obj, "Sending to the socket...");
 	ssize_t sentSize = write(sd, query, dg_query);
 
 	// If send is failed
-	if (-1 == sentSize)
-	{
+	if (-1 == sentSize) {
 		// Throw an exception with error number
 		ThrowErrnoException(env, "java/io/IOException", errno);
 		LOGE("Send size error");
-	}
-	else
-	{
-		if (sentSize > 0)
-		{
-			LOGD("Sent %d bytes.", (int) sentSize);
+	} else {
+		if (sentSize > 0) {
+			LOGD("Sent %d bytes.", (int ) sentSize);
 			//LogMessage(env, obj, "Sent %d bytes.", sentSize);
-		}
-		else
-		{
+		} else {
 			LOGD("Send: client disconnected");
 			//LogMessage(env, obj, "Client disconnected.");
 		}
@@ -338,26 +285,23 @@ static ssize_t SendToSocket(
 	return sentSize;
 }
 
-int get_proc_name_from_pid(int pid, char proc[])
-{
+int get_proc_name_from_pid(int pid, char proc[]) {
 	FILE *file;
 	int err, i;
 
 	char tmp[10];
-	char path[PROCESS_SIZE]="/proc/";
+	char path[PROCESS_SIZE] = "/proc/";
 
 	sprintf(tmp, "%d", pid);
 	strcat(path, tmp);
 	strcat(path, "/cmdline");
 
-	if ((file = fopen(path, "r")) == NULL)
-	{
+	if ((file = fopen(path, "r")) == NULL) {
 		LOGE("Error opening proc/pid/cmdline.");
 		return -1;
 	}
 
-	if ( fgets(proc ,PROCESS_SIZE ,file) == NULL )
-	{
+	if (fgets(proc, PROCESS_SIZE, file) == NULL) {
 		LOGE("Error getting cmdline");
 		return -1;
 	}
@@ -377,12 +321,8 @@ int get_proc_name_from_pid(int pid, char proc[])
  * @param char[] process name.
  * @return permission value.
  */
-static int query4_to_java(
-		JNIEnv* env,
-		jobject obj,
-		struct sockaddr_in addrin,
-		int pid)
-{
+static int query4_to_java(JNIEnv* env, jobject obj, struct sockaddr_in addrin,
+		int pid) {
 	int sendm, recvm, result = -1;
 	char *recvs;
 	char msg[INET_ADDRSTRLEN + PORT_SIZE + INT_SIZE + PROCESS_SIZE];
@@ -392,7 +332,7 @@ static int query4_to_java(
 	char ip[INET_ADDRSTRLEN];
 	unsigned short port;
 
-	recvs = (char *) malloc ( sizeof ((*recvs) * INT_SIZE));
+	recvs = (char *) malloc(sizeof((*recvs) * INT_SIZE));
 
 	inet_ntop(AF_INET, &(addrin.sin_addr), ip, INET_ADDRSTRLEN);
 
@@ -401,18 +341,15 @@ static int query4_to_java(
 
 	sprintf(spid, "%d", pid);
 
-	if(get_proc_name_from_pid(pid, process) == -1)
-	{
+	if (get_proc_name_from_pid(pid, process) == -1) {
 		// In case /proc/pid/cmdline fails, process name is "Unknown"
 		strcpy(process, "Unknown");
 	}
 
 	LOGD("ip: %s, port: %d, pid: %d\n", ip, port, pid);
 
-
 	int clientSocket = NewLocalSocket(env, obj);
-	if (NULL == (*env)->ExceptionOccurred(env))
-	{
+	if (NULL == (*env)->ExceptionOccurred(env)) {
 		ConnectToSocket(env, obj, clientSocket);
 
 		// string will be parsed in java
@@ -431,7 +368,7 @@ static int query4_to_java(
 		result = atoi(recvs);
 	}
 
-	if(clientSocket > 0)
+	if (clientSocket > 0)
 		close(clientSocket);
 
 	return result;
@@ -447,12 +384,8 @@ static int query4_to_java(
  * @param char[] process name.
  * @return permission value.
  */
-static int query6_to_java(
-		JNIEnv* env,
-		jobject obj,
-		struct sockaddr_in6 addrin6,
-		int pid)
-{
+static int query6_to_java(JNIEnv* env, jobject obj, struct sockaddr_in6 addrin6,
+		int pid) {
 	int sendm, recvm, result = -1;
 	char *recvs;
 	char msg[INET6_ADDRSTRLEN + PORT_SIZE + INT_SIZE + PROCESS_SIZE];
@@ -462,7 +395,7 @@ static int query6_to_java(
 	char ip6[INET6_ADDRSTRLEN];
 	unsigned short port;
 
-	recvs = (char *) malloc ( sizeof ((*recvs) * INT_SIZE));
+	recvs = (char *) malloc(sizeof((*recvs) * INT_SIZE));
 
 	inet_ntop(AF_INET6, &(addrin6.sin6_addr), ip6, INET6_ADDRSTRLEN);
 
@@ -471,8 +404,7 @@ static int query6_to_java(
 
 	sprintf(spid, "%d", pid);
 
-	if(get_proc_name_from_pid(pid, process) == -1)
-	{
+	if (get_proc_name_from_pid(pid, process) == -1) {
 		// In case /proc/pid/cmdline fails, process name is "Unknown"
 		strcpy(process, "Unknown");
 	}
@@ -480,8 +412,7 @@ static int query6_to_java(
 	LOGD("ip: %s, port: %d, pid: %d\n", ip6, port, pid);
 
 	int clientSocket = NewLocalSocket(env, obj);
-	if (NULL == (*env)->ExceptionOccurred(env))
-	{
+	if (NULL == (*env)->ExceptionOccurred(env)) {
 		ConnectToSocket(env, obj, clientSocket);
 
 		// string will be parsed in java
@@ -500,7 +431,7 @@ static int query6_to_java(
 		result = atoi(recvs);
 	}
 
-	if(clientSocket > 0)
+	if (clientSocket > 0)
 		close(clientSocket);
 
 	return result;
@@ -509,29 +440,27 @@ static int query6_to_java(
 /*
  * Handle answer from app
  */
-int getResult(int result)
-{
-	switch(result)
-	{
-		case ALLOW_FOREVER:
-			return ALLOW;
-			break;
+int getResult(int result) {
+	switch (result) {
+	case ALLOW_FOREVER:
+		return ALLOW;
+		break;
 
-		case DENY_FOREVER:
-			return DENY;
-			break;
+	case DENY_FOREVER:
+		return DENY;
+		break;
 
-		case ALLOW_ONCE:
-			return ALLOW;
-			break;
+	case ALLOW_ONCE:
+		return ALLOW;
+		break;
 
-		case DENY_ONCE:
-			return DENY;
-			break;
+	case DENY_ONCE:
+		return DENY;
+		break;
 
 		// in case of error the access to the Internet is allowed
-		default:
-			return ALLOW;
+	default:
+		return ALLOW;
 	}
 }
 
@@ -539,10 +468,7 @@ int getResult(int result)
  * run daemon
  */
 
-void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
-		JNIEnv* env,
-		jobject obj)
-{
+void Java_com_rmgoncalo_droidg_Daemon_startDaemon(JNIEnv* env, jobject obj) {
 	clock_gettime(CLOCK_REALTIME, &requestStart);
 
 	struct dg_query* query;
@@ -556,8 +482,7 @@ void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
 	// Construct a new local UNIX socket.
 
 	int serverSocket = NewLocalSocket(env, obj);
-	if (NULL == (*env)->ExceptionOccurred(env))
-	{
+	if (NULL == (*env)->ExceptionOccurred(env)) {
 
 		// Bind socket to a port number
 		BindLocalSocket(env, obj, serverSocket);
@@ -567,9 +492,9 @@ void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
 			goto exit;
 
 		//Change socket permissions
-		mode = chmod(SOCK_PATH, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-		if(mode == -1)
-		{
+		mode = chmod(SOCK_PATH,
+				S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+		if (mode == -1) {
 			LOGE("Error chmod");
 			goto exit;
 		}
@@ -579,8 +504,7 @@ void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
 		if (NULL != (*env)->ExceptionOccurred(env))
 			goto exit;
 
-		for(i = 0; i < 25; i++)
-		{
+		for (i = 0; i < 25; i++) {
 			clock_gettime(CLOCK_REALTIME, &inner_rStart);
 
 			// Accept a client connection on socket
@@ -589,30 +513,32 @@ void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
 				break;
 
 			// Receive query from kernel
-			recvSize = ReceiveFromSocket(env, obj, clientSocket, query, query_size);
+			recvSize = ReceiveFromSocket(env, obj, clientSocket, query,
+					query_size);
 			if ((0 == recvSize) || (NULL != (*env)->ExceptionOccurred(env)))
 				break;
 
 			//query to java
-			if(recvSize > 0)
-			{
-				switch(query->family)
-				{
-					case DG_INET:
-						result = query4_to_java(env, obj, query->addrin, query->pid);
-						break;
-					case DG_INET6:
-						result = query6_to_java(env, obj, query->addrin6, query->pid);
-						break;
-					default:
-						LOGE("Query family error!");
+			if (recvSize > 0) {
+				switch (query->family) {
+				case DG_INET:
+					result = query4_to_java(env, obj, query->addrin,
+							query->pid);
+					break;
+				case DG_INET6:
+					result = query6_to_java(env, obj, query->addrin6,
+							query->pid);
+					break;
+				default:
+					LOGE("Query family error!");
 				}
 			}
 
 			query->permission = getResult(result);
 
 			// Send to the socket
-			sentSize = SendToSocket(env, obj, clientSocket, query,  (size_t) recvSize);
+			sentSize = SendToSocket(env, obj, clientSocket, query,
+					(size_t) recvSize);
 			if ((0 == sentSize) || (NULL != (*env)->ExceptionOccurred(env)))
 				break;
 
@@ -621,23 +547,19 @@ void Java_com_rmgoncalo_droidg_Daemon_startDaemon(
 
 			clock_gettime(CLOCK_REALTIME, &inner_rEnd);
 
-			double iaccum = ( inner_rEnd.tv_sec - inner_rStart.tv_sec )
-				  + ( inner_rEnd.tv_nsec - inner_rStart.tv_nsec )
-				  / BILLION;
-			LOGD( "inner time %d: %lf\n", i, iaccum );
+			double iaccum = (inner_rEnd.tv_sec - inner_rStart.tv_sec)
+					+ (inner_rEnd.tv_nsec - inner_rStart.tv_nsec) / BILLION;
+			LOGD("inner time %d: %lf\n", i, iaccum);
 		}
 	}
 
 	clock_gettime(CLOCK_REALTIME, &requestEnd);
 
-	double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
-	  + ( requestEnd.tv_nsec - requestStart.tv_nsec )
-	  / BILLION;
-	LOGD( "total time: %lf\n", accum );
+	double accum = (requestEnd.tv_sec - requestStart.tv_sec)
+			+ (requestEnd.tv_nsec - requestStart.tv_nsec) / BILLION;
+	LOGD("total time: %lf\n", accum);
 
-exit:
-	if (serverSocket > 0)
-	{
+	exit: if (serverSocket > 0) {
 		close(serverSocket);
 	}
 }
