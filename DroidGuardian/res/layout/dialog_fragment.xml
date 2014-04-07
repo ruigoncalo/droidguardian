@@ -3,16 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:padding="4dip"
-    android:orientation="vertical" >
-    
+    android:orientation="vertical"
+    android:padding="4dip" >
+
     <Spinner
         android:id="@+id/lifetimeSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/lifetime_options"
         android:prompt="@string/forever" />
-    
-  
-    
+
 </LinearLayout>
